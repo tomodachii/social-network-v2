@@ -1,0 +1,127 @@
+{
+  "name": "post-service",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/post-service/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/webpack:webpack",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "target": "node",
+        "compiler": "tsc",
+        "outputPath": "dist/apps/post-service",
+        "main": "apps/post-service/src/main.ts",
+        "tsConfig": "apps/post-service/tsconfig.app.json",
+        "isolatedConfig": true,
+        "webpackConfig": "apps/post-service/webpack.config.js"
+      },
+      "configurations": {
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nrwl/js:node",
+      "options": {
+        "buildTarget": "post-service:build"
+      },
+      "configurations": {
+        "production": {
+          "buildTarget": "post-service:build:production"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/post-service/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "apps/post-service/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
+      }
+    },
+    "prisma-generate": {
+      "executor": "@nx-tools/nx-prisma:generate",
+      "options": {
+        "schema": "apps/post-service/prisma/schema.prisma"
+      }
+    },
+    "prisma-migrate": {
+      "executor": "@nx-tools/nx-prisma:migrate",
+      "options": {
+        "schema": "apps/post-service/prisma/schema.prisma"
+      }
+    },
+    "prisma-pull": {
+      "executor": "@nx-tools/nx-prisma:pull",
+      "options": {
+        "schema": "apps/post-service/prisma/schema.prisma"
+      }
+    },
+    "prisma-push": {
+      "executor": "@nx-tools/nx-prisma:push",
+      "options": {
+        "schema": "apps/post-service/prisma/schema.prisma"
+      }
+    },
+    "prisma-deploy": {
+      "executor": "@nx-tools/nx-prisma:deploy",
+      "options": {
+        "schema": "apps/post-service/prisma/schema.prisma"
+      }
+    },
+    "prisma-status": {
+      "executor": "@nx-tools/nx-prisma:status",
+      "options": {
+        "schema": "apps/post-service/prisma/schema.prisma"
+      }
+    },
+    "prisma-studio": {
+      "executor": "@nx-tools/nx-prisma:studio",
+      "options": {
+        "schema": "apps/post-service/prisma/schema.prisma"
+      }
+    },
+    "prisma-reset": {
+      "executor": "@nx-tools/nx-prisma:reset",
+      "options": {
+        "schema": "apps/post-service/prisma/schema.prisma"
+      }
+    },
+    "prisma-resolve": {
+      "executor": "@nx-tools/nx-prisma:resolve",
+      "options": {
+        "schema": "apps/post-service/prisma/schema.prisma"
+      }
+    },
+    "prisma-seed": {
+      "executor": "@nx-tools/nx-prisma:seed",
+      "options": {
+        "schema": "apps/post-service/prisma/schema.prisma"
+      }
+    },
+    "prisma-validate": {
+      "executor": "@nx-tools/nx-prisma:validate",
+      "options": {
+        "schema": "apps/post-service/prisma/schema.prisma"
+      }
+    }
+  },
+  "tags": []
+}
