@@ -86,6 +86,7 @@ export class PostRepository
           upsert: attachments.map((attachment) => ({
             where: { id: attachment.id },
             create: {
+              id: attachment.id,
               description: attachment.description,
               name: attachment.name,
               size: attachment.size,
@@ -108,6 +109,7 @@ export class PostRepository
           upsert: comments.map((comment) => ({
             where: { id: comment.id },
             create: {
+              id: comment.id,
               content: comment.content,
               userId: comment.userId,
               // postId: postPersistent.id,
@@ -126,6 +128,7 @@ export class PostRepository
                 upsert: comment.attachments.map((attachment) => ({
                   where: { id: attachment.id },
                   create: {
+                    id: attachment.id,
                     description: attachment.description,
                     name: attachment.name,
                     size: attachment.size,
@@ -143,6 +146,57 @@ export class PostRepository
                     notIn: comment.attachments.map(
                       (attachment) => attachment.id
                     ),
+                  },
+                },
+              },
+              replies: {
+                upsert: comment.replies.map((reply) => ({
+                  where: { id: reply.id },
+                  create: {
+                    id: reply.id,
+                    content: reply.content,
+                    userId: reply.userId,
+                    attachments: {
+                      create: reply.attachments.map((attachment) => ({
+                        description: attachment.description,
+                        name: attachment.name,
+                        size: attachment.size,
+                        type: attachment.type,
+                      })),
+                    },
+                  },
+                  update: {
+                    content: reply.content,
+                    attachments: {
+                      upsert: reply.attachments.map((attachment) => ({
+                        where: { id: attachment.id },
+                        create: {
+                          id: attachment.id,
+                          description: attachment.description,
+                          name: attachment.name,
+                          size: attachment.size,
+                          type: attachment.type,
+                        },
+                        update: {
+                          description: attachment.description,
+                          name: attachment.name,
+                          size: attachment.size,
+                          type: attachment.type,
+                        },
+                      })),
+                      deleteMany: {
+                        id: {
+                          notIn: reply.attachments.map(
+                            (attachment) => attachment.id
+                          ),
+                        },
+                      },
+                    },
+                  },
+                })),
+                deleteMany: {
+                  id: {
+                    notIn: comment.replies.map((reply) => reply.id),
                   },
                 },
               },

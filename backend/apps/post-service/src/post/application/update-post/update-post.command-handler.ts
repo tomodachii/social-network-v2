@@ -22,7 +22,6 @@ export class UpdatePostCommandHandler
     if (postOption.isNone()) {
       return Err(new Exception('Cannot find post', HttpStatus.BAD_REQUEST));
     }
-
     const isExistAttachments = await this.repo.checkExistAttachmentsByIds(
       command.attachments.map((attachment) => attachment.id)
     );
