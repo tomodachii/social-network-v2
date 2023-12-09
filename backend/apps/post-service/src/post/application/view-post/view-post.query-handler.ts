@@ -33,6 +33,7 @@ export class ViewPostQueryHandler implements IQueryHandler<ViewPostQuery> {
             createdAt: true,
             id: true,
             updatedAt: true,
+            attachments: true,
             _count: {
               select: {
                 reacts: true,

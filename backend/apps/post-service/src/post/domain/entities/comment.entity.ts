@@ -58,13 +58,14 @@ export class CommentEntity extends Entity<CommentProps> {
   }
 
   addReact(react: ReactVO): void {
-    if (this.props.reacts.find((r) => r.userId === react.userId)) {
-      throw new ArgumentNotProvidedException(
-        'User already reacted',
-        HttpStatus.BAD_REQUEST
-      );
+    const reactIndex = this.props.reacts.findIndex(
+      (r) => r.userId === react.userId
+    );
+    if (reactIndex !== -1) {
+      this.props.reacts[reactIndex] = react;
+    } else {
+      this.props.reacts.push(react);
     }
-    this.props.reacts.push(react);
   }
 
   removeReact(userId: AggregateID): void {
@@ -76,6 +77,12 @@ export class CommentEntity extends Entity<CommentProps> {
       );
     }
     this.props.reacts.splice(reactIndex, 1);
+  }
+
+  addReply(createReplyProps: CreateCommentProps): AggregateID {
+    const reply = CommentEntity.create(createReplyProps);
+    this.props.replies.push(reply);
+    return reply.id;
   }
 
   addAttachment(createAttachment: CreateAttachmentProps): void {

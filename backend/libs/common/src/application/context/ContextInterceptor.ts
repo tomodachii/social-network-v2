@@ -21,7 +21,7 @@ export class ContextInterceptor implements NestInterceptor {
     const userId = request?.user?.id ?? null;
 
     RequestContextService.setRequestId(requestId);
-    RequestContextService.setUserId('30118fc5-665e-4c87-b9c3-8fc246efdf3a');
+    RequestContextService.setUserId('84fb0450-6f0f-43be-86e4-8ec1c76b0d15');
     // console.log(request?.header('x-username'));
 
     return next.handle().pipe(

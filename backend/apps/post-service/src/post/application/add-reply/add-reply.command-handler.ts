@@ -2,22 +2,22 @@ import { Inject } from '@nestjs/common';
 import { AttachmentEntity, PostRepositoryPort } from '../../domain';
 import { POST_REPOSITORY } from '../../post.di-token';
 import { CommandHandler } from '@nestjs/cqrs';
-import { AddCommentDto } from './add-comment.dto';
+import { AddReplyDto } from './add-reply.dto';
 import { Exception } from '@lib/common/exceptions';
 import { HttpStatus } from '@lib/common/api';
 import { RequestContextService } from '@lib/common/application';
-import { Err, Ok, Result } from 'oxide.ts';
+import { Ok, Result } from 'oxide.ts';
 
-@CommandHandler(AddCommentDto)
-export class AddCommentCommandHandler {
+@CommandHandler(AddReplyDto)
+export class AddReplyCommandHandler {
   constructor(
     @Inject(POST_REPOSITORY)
     private readonly repo: PostRepositoryPort
   ) {}
-  async execute(command: AddCommentDto): Promise<Result<string, Error>> {
+  async execute(command: AddReplyDto): Promise<Result<string, Error>> {
     const postOption = await this.repo.findPostById(command.postId);
     if (postOption.isNone()) {
-      return Err(new Exception('Cannot find post', HttpStatus.BAD_REQUEST));
+      throw new Exception('Cannot find post', HttpStatus.BAD_REQUEST);
     }
     const post = postOption.unwrap();
 
@@ -26,7 +26,7 @@ export class AddCommentCommandHandler {
         AttachmentEntity.create(attachment)
       ) || [];
 
-    const commentId = post.addComment({
+    const commentId = post.addReplyOfComment(command.commentId, {
       content: command.content,
       userId: RequestContextService.getUserId(),
       attachments: attachments,
@@ -34,7 +34,7 @@ export class AddCommentCommandHandler {
 
     const result = await Result.safe(this.repo.savePost(post));
     if (result.isErr()) {
-      return result;
+      throw result;
     }
 
     return Ok(commentId);

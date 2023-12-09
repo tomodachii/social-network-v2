@@ -125,6 +125,20 @@ export class PostEntity extends AggregateRoot<PostProps> {
     this.props.comments.splice(commentIndex, 1);
   }
 
+  addReplyOfComment(
+    commentId: AggregateID,
+    createReplyProp: CreateCommentProps
+  ): AggregateID {
+    const comment = this.getComment(commentId);
+    if (!comment) {
+      throw new ArgumentNotProvidedException(
+        'Comment does not exist',
+        HttpStatus.BAD_REQUEST
+      );
+    }
+    return comment.addReply(createReplyProp);
+  }
+
   addAttachment(createAttachment: CreateAttachmentProps): void {
     const attachment = AttachmentEntity.create(createAttachment);
     if (!this.props.attachments.find((a) => a.id === attachment.id)) {
