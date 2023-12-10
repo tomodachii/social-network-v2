@@ -2,36 +2,28 @@ import { Module, Provider, Logger } from '@nestjs/common';
 import { PostMapper } from './post.mapper';
 import { CqrsModule } from '@nestjs/cqrs';
 import { DatabaseModule } from '../database';
-import {
-  AddCommentCommandHandler,
-  AddCommentController,
-  CreatePostCommandHandler,
-  CreatePostController,
-  DeleteCommentCommandHandler,
-  DeleteCommentController,
-  DeletePostCommandHandler,
-  DeletePostController,
-  ReactPostCommandHandler,
-  ReactPostController,
-  UpdateCommentCommandHandler,
-  UpdateCommentController,
-  UpdatePostCommandHandler,
-  UpdatePostController,
-  ViewPostController,
-  ViewPostQueryHandler,
-} from './application';
 import { PostRepository } from './infrastructure';
-import { POST_REPOSITORY } from './post.di-token';
+import {
+  CreatePostCommandHandler,
+  DeletePostCommandHandler,
+  UpdatePostCommandHandler,
+  CreateCommentCommandHandler,
+  ViewPostQueryHandler,
+  POST_REPOSITORY,
+  UpdateCommentCommandHandler,
+  DeleteCommentCommandHandler,
+  ReactPostCommandHandler,
+} from '@lib/post/feature';
+import {
+  CommentHttpController,
+  PostHttpController,
+  ReactHttpController,
+} from './interface-adapter';
 
 const httpControllers = [
-  CreatePostController,
-  UpdatePostController,
-  DeletePostController,
-  ViewPostController,
-  AddCommentController,
-  UpdateCommentController,
-  DeleteCommentController,
-  ReactPostController,
+  PostHttpController,
+  CommentHttpController,
+  ReactHttpController,
 ];
 
 // const messageControllers = [UserMessageController];
@@ -40,7 +32,7 @@ const commandHandlers: Provider[] = [
   CreatePostCommandHandler,
   UpdatePostCommandHandler,
   DeletePostCommandHandler,
-  AddCommentCommandHandler,
+  CreateCommentCommandHandler,
   UpdateCommentCommandHandler,
   DeleteCommentCommandHandler,
   ReactPostCommandHandler,

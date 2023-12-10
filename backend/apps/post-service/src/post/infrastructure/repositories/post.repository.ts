@@ -9,8 +9,11 @@ import {
 } from './../../../database';
 import { BaseRepository } from '@lib/shared/common/databases';
 import { Injectable, Logger } from '@nestjs/common';
-import { PostEntity, CommentEntity, AttachmentEntity } from '../../domain';
-import { PostRepositoryPort } from '../../domain';
+import {
+  PostEntity,
+  CommentEntity,
+  PostRepositoryPort,
+} from '@lib/post/domain';
 import { EventBus } from '@nestjs/cqrs';
 import { PostMapper } from '../../post.mapper';
 import { Ok, Option, Result } from 'oxide.ts';
@@ -51,7 +54,7 @@ export class PostRepository
   }
   async createPost(post: PostEntity): Promise<boolean> {
     const postPersistent = this.mapper.toPersistence(post);
-    const attachments = postPersistent['attachments'];
+    const attachments = postPersistent['attachments'] as AttachmentRecord[];
 
     const result = await this.prisma.postRecord.create({
       data: {
@@ -59,10 +62,19 @@ export class PostRepository
         content: postPersistent.content,
         mode: postPersistent.mode,
         userId: postPersistent.userId,
+        originalPostId: postPersistent.originalPostId,
         version: 0,
         attachments: {
           createMany: {
-            data: attachments,
+            data: [
+              ...attachments.map((attachment) => ({
+                id: attachment.id,
+                description: attachment.description,
+                name: attachment.name,
+                size: attachment.size,
+                type: attachment.type,
+              })),
+            ],
             skipDuplicates: true,
           },
         },
@@ -85,132 +97,131 @@ export class PostRepository
         content: postPersistent.content,
         mode: postPersistent.mode,
         version: postPersistent.version + 1,
-        // attachments: {
-        //   upsert: attachments.map((attachment) => ({
-        //     where: { id: attachment.id },
-        //     create: {
-        //       id: attachment.id,
-        //       description: attachment.description,
-        //       name: attachment.name,
-        //       size: attachment.size,
-        //       type: attachment.type,
-        //     },
-        //     update: {
-        //       description: attachment.description,
-        //       name: attachment.name,
-        //       size: attachment.size,
-        //       type: attachment.type,
-        //     },
-        //   })),
-        //   deleteMany: {
-        //     id: {
-        //       notIn: attachments.map((attachment) => attachment.id),
-        //     },
-        //   },
-        // },
-        // comments: {
-        //   upsert: comments.map((comment) => ({
-        //     where: { id: comment.id },
-        //     create: {
-        //       id: comment.id,
-        //       content: comment.content,
-        //       userId: comment.userId,
-        //       // postId: postPersistent.id,
-        //       attachments: {
-        //         create: comment.attachments.map((attachment) => ({
-        //           description: attachment.description,
-        //           name: attachment.name,
-        //           size: attachment.size,
-        //           type: attachment.type,
-        //         })),
-        //       },
-        //     },
-        //     update: {
-        //       content: comment.content,
-        //       attachments: {
-        //         upsert: comment.attachments.map((attachment) => ({
-        //           where: { id: attachment.id },
-        //           create: {
-        //             id: attachment.id,
-        //             description: attachment.description,
-        //             name: attachment.name,
-        //             size: attachment.size,
-        //             type: attachment.type,
-        //           },
-        //           update: {
-        //             description: attachment.description,
-        //             name: attachment.name,
-        //             size: attachment.size,
-        //             type: attachment.type,
-        //           },
-        //         })),
-        //         deleteMany: {
-        //           id: {
-        //             notIn: comment.attachments.map(
-        //               (attachment) => attachment.id
-        //             ),
-        //           },
-        //         },
-        //       },
-        //       replies: {
-        //         upsert: comment.replies.map((reply) => ({
-        //           where: { id: reply.id },
-        //           create: {
-        //             id: reply.id,
-        //             content: reply.content,
-        //             userId: reply.userId,
-        //             attachments: {
-        //               create: reply.attachments.map((attachment) => ({
-        //                 description: attachment.description,
-        //                 name: attachment.name,
-        //                 size: attachment.size,
-        //                 type: attachment.type,
-        //               })),
-        //             },
-        //           },
-        //           update: {
-        //             content: reply.content,
-        //             attachments: {
-        //               upsert: reply.attachments.map((attachment) => ({
-        //                 where: { id: attachment.id },
-        //                 create: {
-        //                   id: attachment.id,
-        //                   description: attachment.description,
-        //                   name: attachment.name,
-        //                   size: attachment.size,
-        //                   type: attachment.type,
-        //                 },
-        //                 update: {
-        //                   description: attachment.description,
-        //                   name: attachment.name,
-        //                   size: attachment.size,
-        //                   type: attachment.type,
-        //                 },
-        //               })),
-        //               deleteMany: {
-        //                 id: {
-        //                   notIn: reply.attachments.map(
-        //                     (attachment) => attachment.id
-        //                   ),
-        //                 },
-        //               },
-        //             },
-        //           },
-        //         })),
-        //         deleteMany: {
-        //           id: {
-        //             notIn: comment.replies.map((reply) => reply.id),
-        //           },
-        //         },
-        //       },
-        //     },
-        //   })),
-        //   deleteMany: {
-        //     id: {
-        //       notIn: comments.map((comment) => comment.id),
-        //     },
-        //   },
-        // },
+        attachments: {
+          upsert: attachments.map((attachment) => ({
+            where: { id: attachment.id },
+            create: {
+              id: attachment.id,
+              description: attachment.description,
+              name: attachment.name,
+              size: attachment.size,
+              type: attachment.type,
+            },
+            update: {
+              description: attachment.description,
+              name: attachment.name,
+              size: attachment.size,
+              type: attachment.type,
+            },
+          })),
+          deleteMany: {
+            id: {
+              notIn: attachments.map((attachment) => attachment.id),
+            },
+          },
+        },
+        comments: {
+          upsert: comments.map((comment) => ({
+            where: { id: comment.id },
+            create: {
+              id: comment.id,
+              content: comment.content,
+              userId: comment.userId,
+              attachments: {
+                create: comment.attachments.map((attachment) => ({
+                  description: attachment.description,
+                  name: attachment.name,
+                  size: attachment.size,
+                  type: attachment.type,
+                })),
+              },
+            },
+            update: {
+              content: comment.content,
+              attachments: {
+                upsert: comment.attachments.map((attachment) => ({
+                  where: { id: attachment.id },
+                  create: {
+                    id: attachment.id,
+                    description: attachment.description,
+                    name: attachment.name,
+                    size: attachment.size,
+                    type: attachment.type,
+                  },
+                  update: {
+                    description: attachment.description,
+                    name: attachment.name,
+                    size: attachment.size,
+                    type: attachment.type,
+                  },
+                })),
+                deleteMany: {
+                  id: {
+                    notIn: comment.attachments.map(
+                      (attachment) => attachment.id
+                    ),
+                  },
+                },
+              },
+              replies: {
+                upsert: comment.replies.map((reply) => ({
+                  where: { id: reply.id },
+                  create: {
+                    id: reply.id,
+                    content: reply.content,
+                    userId: reply.userId,
+                    attachments: {
+                      create: reply.attachments.map((attachment) => ({
+                        description: attachment.description,
+                        name: attachment.name,
+                        size: attachment.size,
+                        type: attachment.type,
+                      })),
+                    },
+                  },
+                  update: {
+                    content: reply.content,
+                    attachments: {
+                      upsert: reply.attachments.map((attachment) => ({
+                        where: { id: attachment.id },
+                        create: {
+                          id: attachment.id,
+                          description: attachment.description,
+                          name: attachment.name,
+                          size: attachment.size,
+                          type: attachment.type,
+                        },
+                        update: {
+                          description: attachment.description,
+                          name: attachment.name,
+                          size: attachment.size,
+                          type: attachment.type,
+                        },
+                      })),
+                      deleteMany: {
+                        id: {
+                          notIn: reply.attachments.map(
+                            (attachment) => attachment.id
+                          ),
+                        },
+                      },
+                    },
+                  },
+                })),
+                deleteMany: {
+                  id: {
+                    notIn: comment.replies.map((reply) => reply.id),
+                  },
+                },
+              },
+            },
+          })),
+          deleteMany: {
+            id: {
+              notIn: comments.map((comment) => comment.id),
+            },
+          },
+        },
         reacts: {
           deleteMany: {
             userId: {

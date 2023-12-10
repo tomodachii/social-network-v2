@@ -1,0 +1,10 @@
+// export * from './lib/feature-post.module';
+export * from './lib/post.di-token';
+export * from './lib/create-post';
+export * from './lib/update-post';
+export * from './lib/delete-post';
+export * from './lib/view-post';
+export * from './lib/create-comment';
+export * from './lib/update-comment';
+export * from './lib/delete-comment';
+export * from './lib/react-post';

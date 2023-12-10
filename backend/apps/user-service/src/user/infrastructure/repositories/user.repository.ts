@@ -8,7 +8,7 @@ import { None, Option, Some } from 'oxide.ts';
 
 @Injectable()
 export class UserRepository
-  extends BaseRepository<UserEntity, UserRecord>
+  extends BaseRepository<any, UserRecord>
   implements UserRepositoryPort
 {
   constructor(
