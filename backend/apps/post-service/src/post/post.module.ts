@@ -5,14 +5,14 @@ import { DatabaseModule } from '../database';
 import {
   AddCommentCommandHandler,
   AddCommentController,
-  AddReplyCommandHandler,
-  AddReplyController,
   CreatePostCommandHandler,
   CreatePostController,
   DeleteCommentCommandHandler,
   DeleteCommentController,
   DeletePostCommandHandler,
   DeletePostController,
+  ReactPostCommandHandler,
+  ReactPostController,
   UpdateCommentCommandHandler,
   UpdateCommentController,
   UpdatePostCommandHandler,
@@ -31,7 +31,7 @@ const httpControllers = [
   AddCommentController,
   UpdateCommentController,
   DeleteCommentController,
-  AddReplyController,
+  ReactPostController,
 ];
 
 // const messageControllers = [UserMessageController];
@@ -43,7 +43,7 @@ const commandHandlers: Provider[] = [
   AddCommentCommandHandler,
   UpdateCommentCommandHandler,
   DeleteCommentCommandHandler,
-  AddReplyCommandHandler,
+  ReactPostCommandHandler,
 ];
 
 const queryHandlers: Provider[] = [ViewPostQueryHandler];

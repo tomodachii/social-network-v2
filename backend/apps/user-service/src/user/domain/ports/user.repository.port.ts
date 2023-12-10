@@ -1,4 +1,4 @@
-import { RepositoryPort } from '@lib/ddd';
+import { RepositoryPort } from '@lib/shared/ddd';
 import { UserEntity } from '../user.entity';
 import { Option } from 'oxide.ts';
 

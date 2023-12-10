@@ -3,10 +3,10 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { CreatePostDto } from './create-post.dto';
 import { AttachmentEntity, PostEntity, PostRepositoryPort } from '../../domain';
 import { POST_REPOSITORY } from '../../post.di-token';
-import { RequestContextService } from '@lib/common/application';
+import { RequestContextService } from '@lib/shared/common/application';
 import { Err, Ok, Result } from 'oxide.ts';
-import { Exception } from '@lib/common/exceptions';
-import { HttpStatus } from '@lib/common/api';
+import { Exception } from '@lib/shared/common/exceptions';
+import { HttpStatus } from '@lib/shared/common/api';
 
 @CommandHandler(CreatePostDto)
 export class CreatePostCommandHandler

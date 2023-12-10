@@ -16,7 +16,7 @@ import {
   UpdateBioImageDto,
   UserResponseDto,
 } from '../dtos';
-import { BaseResponse } from '@lib/common/api';
+import { BaseResponse } from '@lib/shared/common/api';
 import { Result, match } from 'oxide.ts';
 import {
   CreateUserCommand,
@@ -69,7 +69,7 @@ export class UserController {
   @Put(':userId/avatar')
   async updateAvatar(
     @Param('userId') userId: string,
-    @Body() body: UpdateBioImageDto,
+    @Body() body: UpdateBioImageDto
   ): Promise<BaseResponse<boolean>> {
     const command = new UpdateAvatarCommand({
       ...body,

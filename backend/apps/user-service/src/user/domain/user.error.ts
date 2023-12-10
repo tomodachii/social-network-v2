@@ -1,5 +1,5 @@
-import { HttpStatus } from '@lib/common/api';
-import { Exception } from '@lib/common/exceptions';
+import { HttpStatus } from '@lib/shared/common/api';
+import { Exception } from '@lib/shared/common/exceptions';
 
 export class UserAlreadyExistsError extends Exception {
   static readonly message = 'UserEntity already exists';

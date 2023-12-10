@@ -5,4 +5,4 @@ export * from './view-post';
 export * from './add-comment';
 export * from './update-comment';
 export * from './delete-comment';
-export * from './add-reply';
+export * from './react-post';

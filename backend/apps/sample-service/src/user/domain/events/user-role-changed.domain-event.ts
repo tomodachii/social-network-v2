@@ -1,4 +1,4 @@
-import { DomainEvent, DomainEventProps } from '@lib/ddd';
+import { DomainEvent, DomainEventProps } from '@lib/shared/ddd';
 import { UserRoles } from '../user.types';
 
 export class UserRoleChangedDomainEvent extends DomainEvent {

@@ -13,15 +13,15 @@ import {
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { match, Result } from 'oxide.ts';
-import { AggregateID, Paginated } from '@lib/ddd';
+import { AggregateID, Paginated } from '@lib/shared/ddd';
 import {
   ApiErrorResponse,
   IdResponse,
   PaginatedQueryRequestDto,
   ResponseBase,
-} from '@lib/common/api';
+} from '@lib/shared/common/api';
 import { UserAlreadyExistsError } from '../../domain';
-import { NotFoundException } from '@lib/common/exceptions';
+import { NotFoundException } from '@lib/shared/common/exceptions';
 import {
   CreateUserCommand,
   DeleteUserCommand,

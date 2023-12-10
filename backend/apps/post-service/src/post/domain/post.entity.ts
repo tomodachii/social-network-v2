@@ -1,8 +1,8 @@
-import { AggregateID, AggregateRoot } from '@lib/ddd';
-import { Guard } from '@lib/common/utils';
-import { ArgumentNotProvidedException } from '@lib/common/exceptions';
+import { AggregateID, AggregateRoot } from '@lib/shared/ddd';
+import { Guard } from '@lib/shared/common/utils';
+import { ArgumentNotProvidedException } from '@lib/shared/common/exceptions';
 import { v4 } from 'uuid';
-import { HttpStatus } from '@lib/common/api';
+import { HttpStatus } from '@lib/shared/common/api';
 import { ReactProps, ReactVO } from './value-objects';
 import {
   AttachmentEntity,
@@ -125,7 +125,28 @@ export class PostEntity extends AggregateRoot<PostProps> {
     this.props.comments.splice(commentIndex, 1);
   }
 
-  addReplyOfComment(
+  getReplyToComment(
+    commentId: AggregateID,
+    replyId: AggregateID
+  ): CommentEntity {
+    const comment = this.getComment(commentId);
+    if (!comment) {
+      throw new ArgumentNotProvidedException(
+        'Comment does not exist',
+        HttpStatus.BAD_REQUEST
+      );
+    }
+    const reply = comment.replies.find((r) => r.id === replyId);
+    if (!reply) {
+      throw new ArgumentNotProvidedException(
+        'Reply does not exist',
+        HttpStatus.BAD_REQUEST
+      );
+    }
+    return reply;
+  }
+
+  addReplyToComment(
     commentId: AggregateID,
     createReplyProp: CreateCommentProps
   ): AggregateID {
@@ -137,6 +158,32 @@ export class PostEntity extends AggregateRoot<PostProps> {
       );
     }
     return comment.addReply(createReplyProp);
+  }
+
+  updateReplyToComment(
+    commentId: AggregateID,
+    replyId: AggregateID,
+    updateReplyProp: Partial<CreateCommentProps>
+  ): void {
+    const comment = this.getComment(commentId);
+    if (!comment) {
+      throw new ArgumentNotProvidedException(
+        'Comment does not exist ' + commentId,
+        HttpStatus.BAD_REQUEST
+      );
+    }
+    comment.updateReply(replyId, updateReplyProp);
+  }
+
+  removeReplyToComment(commentId: AggregateID, replyId: AggregateID): void {
+    const comment = this.getComment(commentId);
+    if (!comment) {
+      throw new ArgumentNotProvidedException(
+        'Comment does not exist',
+        HttpStatus.BAD_REQUEST
+      );
+    }
+    comment.removeReply(replyId);
   }
 
   addAttachment(createAttachment: CreateAttachmentProps): void {
@@ -160,14 +207,15 @@ export class PostEntity extends AggregateRoot<PostProps> {
   }
 
   addReact(reactProp: ReactProps): void {
-    if (this.props.reacts.find((r) => r.userId === react.userId)) {
-      throw new ArgumentNotProvidedException(
-        'User already reacted',
-        HttpStatus.BAD_REQUEST
-      );
-    }
     const react = new ReactVO(reactProp);
-    this.props.reacts.push(react);
+    const reactIndex = this.props.reacts.findIndex(
+      (react) => react.userId === reactProp.userId
+    );
+    if (reactIndex !== -1) {
+      this.props.reacts.splice(reactIndex, 1, react);
+    } else {
+      this.props.reacts.push(react);
+    }
   }
 
   removeReact(userId: AggregateID): void {

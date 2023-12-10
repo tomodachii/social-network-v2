@@ -4,7 +4,7 @@ import {
 } from '../interfaces';
 import { AuthServiceProxyPort } from '../auth-service-proxy.port';
 import { Injectable } from '@nestjs/common';
-import { BaseResponse } from '@lib/common/api';
+import { BaseResponse } from '@lib/shared/common/api';
 
 @Injectable()
 export class MockAuthServiceProxy implements AuthServiceProxyPort {

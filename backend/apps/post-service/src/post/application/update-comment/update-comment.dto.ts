@@ -25,6 +25,9 @@ export class UpdateCommentDto {
   commentId: string;
 
   @IsString()
+  replyTo: string;
+
+  @IsString()
   content: string;
 
   @Type(() => AttachmentDto)

@@ -33,16 +33,17 @@ enum PostMode {
 }
 
 model ReactRecord {
-  createdAt DateTime      @default(now())
+  id        String         @id @default(uuid())
   type      ReactType
   userId    String
-  user      UserRecord    @relation(fields: [userId], references: [userId], onUpdate: Cascade, onDelete: Cascade)
-  postId    String
-  post      PostRecord    @relation(name: "ReactPost", map: "ReactPost", fields: [postId], references: [id])
-  commentId String
-  comment   CommentRecord @relation(name: "ReactComment", fields: [commentId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  user      UserRecord     @relation(fields: [userId], references: [userId], onUpdate: Cascade, onDelete: Cascade)
+  postId    String?
+  post      PostRecord?    @relation(name: "ReactPost", map: "ReactPost", fields: [postId], references: [id])
+  commentId String?
+  comment   CommentRecord? @relation(name: "ReactComment", fields: [commentId], references: [id], onUpdate: Cascade, onDelete: Cascade)
 
-  @@unique([userId, postId, commentId, type])
+  @@unique([userId, postId, type])
+  @@unique([userId, commentId, type])
   @@map("react")
 }
 

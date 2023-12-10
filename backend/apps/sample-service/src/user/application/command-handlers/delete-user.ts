@@ -1,4 +1,4 @@
-import { NotFoundException } from '@lib/common/exceptions';
+import { NotFoundException } from '@lib/shared/common/exceptions';
 import { Inject } from '@nestjs/common';
 import { CommandHandler } from '@nestjs/cqrs';
 import { Err, Ok, Result } from 'oxide.ts';

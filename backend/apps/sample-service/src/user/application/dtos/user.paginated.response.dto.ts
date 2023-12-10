@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { PaginatedResponseDto } from '@lib/common/api';
+import { PaginatedResponseDto } from '@lib/shared/common/api';
 import { UserResponseDto } from './user.response.dto';
 
 export class UserPaginatedResponseDto extends PaginatedResponseDto<UserResponseDto> {

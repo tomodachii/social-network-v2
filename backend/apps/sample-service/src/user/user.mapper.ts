@@ -1,8 +1,8 @@
-import { Mapper } from '@lib/ddd';
+import { Mapper } from '@lib/shared/ddd';
 import { UserEntity, AddressVO, UserRoles } from './domain';
 import { Injectable } from '@nestjs/common';
 import { UserResponseDto } from './application';
-import { UserRecord } from '@prisma/client/sample';
+import { UserRecord } from '@prisma/client/user';
 
 /**
  * Mapper constructs objects that are used in different layers:

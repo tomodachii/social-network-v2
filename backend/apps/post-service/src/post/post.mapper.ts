@@ -1,4 +1,4 @@
-import { AggregateID, Mapper } from '@lib/ddd';
+import { AggregateID, Mapper } from '@lib/shared/ddd';
 import {
   AttachmentEntity,
   AttachmentType,
@@ -41,7 +41,6 @@ export class PostMapper implements Mapper<PostEntity, PostRecord> {
 
   private static initReactVO(react: ReactRecord): ReactVO {
     return new ReactVO({
-      createdAt: react.createdAt,
       type: react.type as ReactType,
       userId: react.userId,
     });
@@ -124,9 +123,10 @@ export class PostMapper implements Mapper<PostEntity, PostRecord> {
     ownnerId: AggregateID
   ): Partial<ReactRecord> {
     return {
-      createdAt: react.createdAt,
       type: react.type,
       userId: react.userId,
+      postId: ownnerId,
+      commentId: ownnerId,
     };
   }
 
