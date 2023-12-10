@@ -1,4 +1,4 @@
-import { BaseRepository } from '@lib/common/databases';
+import { BaseRepository } from '@lib/shared/common/databases';
 import { BioImageType, UserEntity, UserRepositoryPort } from '../../domain';
 import { PrismaUserService, UserRecord } from '../../../database';
 import { EventBus } from '@nestjs/cqrs';

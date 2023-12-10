@@ -3,9 +3,9 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UpdatePostDto } from './update-post.dto';
 import { AttachmentEntity, PostEntity, PostRepositoryPort } from '../../domain';
 import { POST_REPOSITORY } from '../../post.di-token';
-import { Exception } from '@lib/common/exceptions';
-import { HttpStatus } from '@lib/common/api';
-import { RequestContextService } from '@lib/common/application';
+import { Exception } from '@lib/shared/common/exceptions';
+import { HttpStatus } from '@lib/shared/common/api';
+import { RequestContextService } from '@lib/shared/common/application';
 import { Err, Result } from 'oxide.ts';
 
 @CommandHandler(UpdatePostDto)
@@ -35,6 +35,15 @@ export class UpdatePostCommandHandler
     }
 
     const post = postOption.unwrap();
+
+    if (post.userId !== RequestContextService.getUserId()) {
+      return Err(
+        new Exception(
+          'You do not have permission to update this post',
+          HttpStatus.FORBIDDEN
+        )
+      );
+    }
 
     for (let attachment of post.attachments) {
       post.removeAttachment(attachment.id);

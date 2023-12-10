@@ -1,7 +1,7 @@
-import { ValueObject } from '@lib/ddd';
-import { Guard } from '@lib/common/utils';
-import { ArgumentOutOfRangeException } from '@lib/common/exceptions';
-import { HttpStatus } from '@lib/common/api';
+import { ValueObject } from '@lib/shared/ddd';
+import { Guard } from '@lib/shared/common/utils';
+import { ArgumentOutOfRangeException } from '@lib/shared/common/exceptions';
+import { HttpStatus } from '@lib/shared/common/api';
 
 /** Note:
  * Value Objects with multiple properties can contain

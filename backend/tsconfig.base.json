@@ -15,10 +15,10 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@lib/shared/ddd": ["libs/shared/ddd/src/index.ts"],
       "@lib/auth-service-proxy": ["libs/auth-service-proxy/src/index.ts"],
-      "@lib/common/*": ["libs/common/src/*/index.ts"],
-      "@lib/ddd": ["libs/ddd/src/index.ts"],
-      "@lib/sample-db": ["libs/sample-db/src/index.ts"]
+      "@lib/sample-db": ["libs/sample-db/src/index.ts"],
+      "@lib/shared/common/*": ["libs/shared/common/src/*/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

@@ -1,10 +1,10 @@
-import { AggregateID, Entity } from '@lib/ddd';
+import { AggregateID, Entity } from '@lib/shared/ddd';
 import {
   ArgumentInvalidException,
   ArgumentOutOfRangeException,
-} from '@lib/common/exceptions';
+} from '@lib/shared/common/exceptions';
 import { v4 } from 'uuid';
-import { HttpStatus } from '@lib/common/api';
+import { HttpStatus } from '@lib/shared/common/api';
 import { AttachmentType } from '../post.type';
 import { validate as uuidValidate } from 'uuid';
 import { Err, Ok, Result } from 'oxide.ts';

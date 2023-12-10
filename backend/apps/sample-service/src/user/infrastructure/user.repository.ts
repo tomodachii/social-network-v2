@@ -1,5 +1,5 @@
 import { PrismaSampleService, UserRecord } from '@lib/sample-db';
-import { BaseRepository } from '@lib/common/databases';
+import { BaseRepository } from '@lib/shared/common/databases';
 import { UserRepositoryPort, UserEntity } from '../domain';
 import { UserMapper } from '../user.mapper';
 import { Injectable, Logger } from '@nestjs/common';

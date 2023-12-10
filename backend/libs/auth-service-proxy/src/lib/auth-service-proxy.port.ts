@@ -1,4 +1,4 @@
-import { BaseResponse } from '@lib/common/api';
+import { BaseResponse } from '@lib/shared/common/api';
 import {
   CreateCredentialPayload,
   CreateCredentialResponse,

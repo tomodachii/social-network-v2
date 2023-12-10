@@ -1,11 +1,11 @@
-import { AggregateRoot } from '@lib/ddd';
-import { Guard } from '@lib/common/utils';
-import { ArgumentNotProvidedException } from '@lib/common/exceptions';
+import { AggregateRoot } from '@lib/shared/ddd';
+import { Guard } from '@lib/shared/common/utils';
+import { ArgumentNotProvidedException } from '@lib/shared/common/exceptions';
 import { v4 } from 'uuid';
 import { Gender } from './user.type';
 import { AddressProps, AddressVO } from './value-objects';
 import { ConfigEntity, BioImageEntity, CreateBioImageProps } from './entities';
-import { HttpStatus } from '@lib/common/api';
+import { HttpStatus } from '@lib/shared/common/api';
 
 export interface UserProps {
   firstName: string;

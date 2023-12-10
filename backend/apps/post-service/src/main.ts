@@ -7,7 +7,7 @@ import { Logger, ValidationPipe } from '@nestjs/common';
 import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 
 import { AppModule } from './app.module';
-import { AllExceptionsFilter } from '@lib/common/exceptions';
+import { AllExceptionsFilter } from '@lib/shared/common/exceptions';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

@@ -1,4 +1,4 @@
-import { Mapper } from '@lib/ddd';
+import { Mapper } from '@lib/shared/ddd';
 import { Injectable } from '@nestjs/common';
 import { WalletEntity } from './domain';
 import { WalletRecord } from '@prisma/client/sample';

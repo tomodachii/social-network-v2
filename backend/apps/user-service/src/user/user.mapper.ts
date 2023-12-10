@@ -1,4 +1,4 @@
-import { Mapper } from '@lib/ddd';
+import { Mapper } from '@lib/shared/ddd';
 import {
   AddressVO,
   BioImageType,

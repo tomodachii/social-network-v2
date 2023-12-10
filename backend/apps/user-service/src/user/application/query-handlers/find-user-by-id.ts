@@ -1,4 +1,4 @@
-import { QueryBase } from '@lib/ddd';
+import { QueryBase } from '@lib/shared/ddd';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { PrismaUserService, UserRecord } from 'apps/user-service/src/database';
 import { Ok, Result } from 'oxide.ts';

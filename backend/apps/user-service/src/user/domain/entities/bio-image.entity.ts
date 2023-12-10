@@ -1,11 +1,11 @@
-import { Entity } from '@lib/ddd';
+import { Entity } from '@lib/shared/ddd';
 import {
   ArgumentInvalidException,
   ArgumentOutOfRangeException,
-} from '@lib/common/exceptions';
+} from '@lib/shared/common/exceptions';
 import { BioImageType } from '../user.type';
 import { validate as uuidValidate } from 'uuid';
-import { HttpStatus } from '@lib/common/api';
+import { HttpStatus } from '@lib/shared/common/api';
 
 const IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.png'];
 

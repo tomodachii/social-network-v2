@@ -1,4 +1,4 @@
-import { Exception } from '@lib/common/exceptions';
+import { Exception } from '@lib/shared/common/exceptions';
 
 export class WalletNotEnoughBalanceError extends Exception {
   static readonly message = 'WalletRecord has not enough balance';

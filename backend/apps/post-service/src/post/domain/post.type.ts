@@ -1,5 +1,3 @@
-import e from 'express';
-
 export enum ReactType {
   Love = 'Love',
   Like = 'Like',

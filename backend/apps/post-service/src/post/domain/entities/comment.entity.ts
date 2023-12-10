@@ -1,8 +1,8 @@
-import { AggregateID, Entity } from '@lib/ddd';
-import { Guard } from '@lib/common/utils';
-import { ArgumentNotProvidedException } from '@lib/common/exceptions';
+import { AggregateID, Entity } from '@lib/shared/ddd';
+import { Guard } from '@lib/shared/common/utils';
+import { ArgumentNotProvidedException } from '@lib/shared/common/exceptions';
 import { v4 } from 'uuid';
-import { HttpStatus } from '@lib/common/api';
+import { HttpStatus } from '@lib/shared/common/api';
 import { ReactVO } from '../value-objects/react.vo';
 import { AttachmentEntity, CreateAttachmentProps } from './attachment.entity';
 
@@ -83,6 +83,35 @@ export class CommentEntity extends Entity<CommentProps> {
     const reply = CommentEntity.create(createReplyProps);
     this.props.replies.push(reply);
     return reply.id;
+  }
+
+  updateReply(
+    replyId: AggregateID,
+    updateReplyProps: Partial<CreateCommentProps>
+  ): void {
+    const reply = this.getReply(replyId);
+    if (!reply) {
+      throw new ArgumentNotProvidedException(
+        'Reply does not exist',
+        HttpStatus.BAD_REQUEST
+      );
+    }
+    reply.content = updateReplyProps.content;
+  }
+
+  removeReply(replyId: AggregateID): void {
+    const replyIndex = this.props.replies.findIndex((r) => r.id === replyId);
+    if (replyIndex === -1) {
+      throw new ArgumentNotProvidedException(
+        'Reply does not exist',
+        HttpStatus.BAD_REQUEST
+      );
+    }
+    this.props.replies.splice(replyIndex, 1);
+  }
+
+  getReply(replyId: AggregateID): CommentEntity {
+    return this.props.replies.find((r) => r.id === replyId);
   }
 
   addAttachment(createAttachment: CreateAttachmentProps): void {

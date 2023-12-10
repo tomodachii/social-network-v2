@@ -1,4 +1,4 @@
-import { Entity } from '@lib/ddd';
+import { Entity } from '@lib/shared/ddd';
 
 interface ConfigProps {}
 

@@ -23,6 +23,9 @@ export class AddCommentDto {
   postId: string;
 
   @IsString()
+  replyTo: string;
+
+  @IsString()
   content: string;
 
   @Type(() => AttachmentDto)

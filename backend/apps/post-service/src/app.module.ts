@@ -4,7 +4,7 @@ import { CqrsModule } from '@nestjs/cqrs';
 import {
   ContextInterceptor,
   ExceptionInterceptor,
-} from '@lib/common/application';
+} from '@lib/shared/common/application';
 import { RequestContextModule } from 'nestjs-request-context';
 import { DatabaseModule, PrismaPostService } from './database';
 import { PostModule } from './post';

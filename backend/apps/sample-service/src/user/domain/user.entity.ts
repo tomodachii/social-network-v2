@@ -1,4 +1,4 @@
-import { AggregateRoot, AggregateID } from '@lib/ddd';
+import { AggregateRoot, AggregateID } from '@lib/shared/ddd';
 import { UserCreatedDomainEvent } from './events';
 import { AddressVO, AddressProps } from './value-objects';
 import {

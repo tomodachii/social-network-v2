@@ -1,11 +1,11 @@
-import { AggregateID, Command, CommandProps } from '@lib/ddd';
+import { AggregateID, Command, CommandProps } from '@lib/shared/ddd';
 import { Gender, UserEntity, UserRepositoryPort } from '../../domain';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
 import { Ok, Result } from 'oxide.ts';
 import { AUTH_SERVICE_PROXY, USER_REPOSITORY } from '../../user.di-token';
 import { AuthServiceProxyPort } from '@lib/auth-service-proxy';
-import { Exception } from '@lib/common/exceptions';
+import { Exception } from '@lib/shared/common/exceptions';
 import { CreateUserResponseDto } from '../dtos';
 
 export class CreateUserCommand extends Command {

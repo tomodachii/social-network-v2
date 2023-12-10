@@ -1,9 +1,9 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Err, Ok, Result } from 'oxide.ts';
-import { AggregateID } from '@lib/ddd';
-import { ConflictException } from '@lib/common/exceptions';
+import { AggregateID } from '@lib/shared/ddd';
+import { ConflictException } from '@lib/shared/common/exceptions';
 import { Inject } from '@nestjs/common';
-import { Command, CommandProps } from '@lib/ddd';
+import { Command, CommandProps } from '@lib/shared/ddd';
 import { USER_REPOSITORY } from '../../user.di-tokens';
 import {
   AddressVO,

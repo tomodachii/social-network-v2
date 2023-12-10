@@ -1,4 +1,4 @@
-import { PaginatedQueryParams, RepositoryPort } from '@lib/ddd';
+import { PaginatedQueryParams, RepositoryPort } from '@lib/shared/ddd';
 import { UserEntity } from '..';
 import { Option } from 'oxide.ts';
 

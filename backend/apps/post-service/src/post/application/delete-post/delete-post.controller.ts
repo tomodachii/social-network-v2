@@ -2,7 +2,7 @@ import { Controller, Delete, Param } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
 import { DeletePostCommand } from './delete-post.command-handler';
 import { Result, match } from 'oxide.ts';
-import { BaseResponse } from '@lib/common/api';
+import { BaseResponse } from '@lib/shared/common/api';
 
 @Controller('posts')
 export class DeletePostController {

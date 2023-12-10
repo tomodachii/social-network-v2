@@ -1,8 +1,8 @@
-import { Controller, Delete, Param } from '@nestjs/common';
+import { Controller, Delete, Param, Body } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
 import { Result, match } from 'oxide.ts';
-import { BaseResponse } from '@lib/common/api';
-import { DeleteCommentCommand } from './delete-comment.command-handler';
+import { BaseResponse } from '@lib/shared/common/api';
+import { DeleteCommentDto } from './delete-comment.dto';
 
 @Controller('posts')
 export class DeleteCommentController {
@@ -11,12 +11,12 @@ export class DeleteCommentController {
   @Delete(':postId/comments/:commentId')
   async create(
     @Param('postId') postId: string,
-    @Param('commentId') commentId: string
+    @Param('commentId') commentId: string,
+    @Body() body: DeleteCommentDto
   ) {
-    const deleteCommentDto = new DeleteCommentCommand(postId, commentId);
-    const result: Result<boolean, Error> = await this.commandBus.execute(
-      deleteCommentDto
-    );
+    body.postId = postId;
+    body.commentId = commentId;
+    const result: Result<boolean, Error> = await this.commandBus.execute(body);
     return match(result, {
       Ok: (response: boolean) => new BaseResponse<boolean>(response),
       Err: (error: Error) => {

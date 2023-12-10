@@ -2,7 +2,7 @@ import { Body, Controller, Param, Put } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
 import { UpdatePostDto } from './update-post.dto';
 import { Result, match } from 'oxide.ts';
-import { BaseResponse } from '@lib/common/api';
+import { BaseResponse } from '@lib/shared/common/api';
 
 @Controller('posts')
 export class UpdatePostController {
