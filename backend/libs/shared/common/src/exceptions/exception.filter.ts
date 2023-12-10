@@ -24,12 +24,12 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const { httpAdapter } = this.httpAdapterHost;
 
     const ctx = host.switchToHttp();
-    // Logger.debug(
-    //   `[${RequestContextService.getRequestId()}] ${exception.message}: ${
-    //     exception.stack
-    //   }`,
-    //   this.serviceName
-    // );
+    Logger.debug(
+      `[${RequestContextService.getRequestId()}] ${exception.message}: ${
+        exception.stack
+      }`,
+      this.serviceName
+    );
     let responseBody: BaseResponse<null>;
     let httpStatus: HttpStatus;
     if (exception?.message) {

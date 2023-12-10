@@ -1,0 +1,79 @@
+import { Inject } from '@nestjs/common';
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { RequestContextService } from '@lib/shared/common/application';
+import { Err, Ok, Result } from 'oxide.ts';
+import { Exception } from '@lib/shared/common/exceptions';
+import { HttpStatus } from '@lib/shared/common/api';
+import { CreatePostCommand } from './create-post.command';
+import { PostEntity, PostRepositoryPort } from '@lib/post/domain';
+import { POST_REPOSITORY } from '../post.di-token';
+import { Guard } from '@lib/shared/common/utils';
+
+@CommandHandler(CreatePostCommand)
+export class CreatePostCommandHandler
+  implements ICommandHandler<CreatePostCommand>
+{
+  constructor(
+    @Inject(POST_REPOSITORY)
+    protected readonly repo: PostRepositoryPort
+  ) {}
+
+  async execute(command: CreatePostCommand): Promise<Result<string, Error>> {
+    let originalPost: PostEntity | undefined = undefined;
+
+    if (command.originalPostId) {
+      const originalPostOption = await this.repo.findPostById(
+        command.originalPostId
+      );
+      if (originalPostOption.isNone()) {
+        return Err(
+          new Exception('Original post not found', HttpStatus.NOT_FOUND)
+        );
+      }
+
+      originalPost = originalPostOption.unwrap();
+    }
+
+    const post = PostEntity.create({
+      content: command.content,
+      mode: command.mode,
+      attachments: [],
+      originalPost: originalPost,
+      userId: RequestContextService.getUserId(),
+    });
+
+    const isExistAttachments =
+      !Guard.isEmpty(command.attachments) &&
+      (await this.repo.checkExistAttachmentsByIds(
+        command.attachments?.map((attachment) => attachment.id)
+      ));
+
+    if (isExistAttachments) {
+      return Err(
+        new Exception(
+          'Attachments belong to other post',
+          HttpStatus.BAD_REQUEST
+        )
+      );
+    }
+
+    if (!Guard.isEmpty(command.attachments))
+      for (let attachment of command.attachments) {
+        post.addAttachment({
+          description: attachment.description,
+          type: attachment.type,
+          id: attachment.id,
+          name: attachment.name,
+          size: attachment.size,
+        });
+      }
+
+    const result = await Result.safe(this.repo.createPost(post));
+
+    if (result.isErr()) {
+      return result;
+    }
+
+    return Ok(post.id);
+  }
+}

@@ -1,4 +1,4 @@
-import { AggregateID, Mapper } from '@lib/shared/ddd';
+import { AggregateID, Mapper } from '@lib/shared/ddd-v2';
 import {
   AttachmentEntity,
   AttachmentType,
@@ -7,7 +7,7 @@ import {
   PostMode,
   ReactType,
   ReactVO,
-} from './domain';
+} from '@lib/post/domain';
 import {
   CommentPersistent,
   PostPrersistent,
@@ -33,7 +33,7 @@ export class PostMapper implements Mapper<PostEntity, PostRecord> {
         attachments:
           record.attachments?.map(PostMapper.initAttachmentEntity) ?? [],
         comments: record.comments?.map(PostMapper.initCommentEntity) ?? [],
-        reacts: [],
+        reacts: record.reacts?.map(PostMapper.initReactVO) ?? [],
       },
     });
     return result;
@@ -73,7 +73,7 @@ export class PostMapper implements Mapper<PostEntity, PostRecord> {
         attachments:
           comment.attachments?.map(PostMapper.initAttachmentEntity) ?? [],
         replies: comment.replies?.map(PostMapper.initCommentEntity) ?? [],
-        reacts: [],
+        reacts: comment.reacts?.map(PostMapper.initReactVO) ?? [],
       },
     });
     return result;
@@ -115,6 +115,8 @@ export class PostMapper implements Mapper<PostEntity, PostRecord> {
       description: attachmentCopy.description,
       size: attachmentCopy.size,
       type: attachmentCopy.type,
+      postId: ownnerId,
+      commentId: ownnerId,
     };
   }
 

@@ -1,4 +1,4 @@
-import { AggregateRoot, Mapper } from '@lib/shared/ddd';
+import { AggregateRoot, Mapper } from '@lib/shared/ddd-v2';
 import { LoggerPort } from '@lib/shared/common/ports';
 import { ObjectLiteral } from '@lib/shared/common/types';
 import { EventBus } from '@nestjs/cqrs';
