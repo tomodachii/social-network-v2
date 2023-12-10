@@ -1,0 +1,43 @@
+.toast-msg {
+  margin: 0;
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+  box-shadow: 0 0.6px 1.8px rgba(0, 0, 0, 0.1), 0 3.2px 7.2px rgba(0, 0, 0, 0.13);
+  border-radius: 4px;
+  width: 422px;
+  max-width: 40vh;
+  min-height: 53px;
+  right: 20px;
+  top: 100px;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 21px;
+}
+
+.toast-body {
+  padding: 0;
+  margin-right: 8px;
+}
+
+.success {
+  background-color: #D1E8CF;
+  color: #201F1E;
+}
+
+.error {
+  background-color: #EFD9DB;
+  color: #201F1E;
+}
+
+.info {
+  background-color: #CCD9EF;
+  color: #201F1E;
+}
+
+.close-button > svg {
+  width: 14px;
+  height: 14px;
+}
