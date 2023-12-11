@@ -15,13 +15,13 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@lib/shared/ddd-v2": ["libs/shared/ddd-v2/src/index.ts"],
       "@lib/auth-service-proxy": ["libs/auth-service-proxy/src/index.ts"],
       "@lib/post/domain": ["libs/post/domain-post/src/index.ts"],
       "@lib/post/feature": ["libs/post/feature-post/src/index.ts"],
       "@lib/sample-db": ["libs/sample-db/src/index.ts"],
       "@lib/shared/common/*": ["libs/shared/common/src/*/index.ts"],
-      "@lib/shared/ddd": ["libs/shared/ddd/src/index.ts"]
+      "@lib/shared/ddd": ["libs/shared/ddd/src/index.ts"],
+      "@lib/shared/ddd-v2": ["libs/shared/ddd-v2/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
