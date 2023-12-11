@@ -1,0 +1,69 @@
+.input {
+  border-radius: 16px;
+  background: #fff;
+  border: none;
+  outline: none;
+  &::placeholder {
+    color: #bdbdbd;
+    text-align: center;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+  }
+  height: 40px;
+  font-size: 18px;
+  text-align: center;
+  padding: 0 16px;
+  width: 100%;
+}
+
+.create-user-input {
+  border-radius: 16px;
+  background: #fff;
+  border: none;
+  outline: none;
+  &::placeholder {
+    color: #bdbdbd;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+  }
+  height: 40px;
+  font-size: 18px;
+  padding: 16px;
+  width: 100%;
+  background-color: #f9f9f9;
+}
+
+.create-user-radio {
+  margin-right: 8px;
+  width: 18px;
+  height: 18px;
+}
+
+.password-input {
+}
+
+.button {
+  &:active,
+  &:focus {
+    outline: none;
+  }
+  border-radius: 16px;
+  width: 50%;
+  background-color: #141414;
+  color: #fff;
+  font-weight: 600;
+}
+
+.sign-up-button {
+  background-color: #ffe536;
+  color: #141414;
+  margin: 0 auto;
+}
+
+.invalid-input {
+  border-color: red;
+}

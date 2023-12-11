@@ -1,0 +1,1 @@
+export const IDLE_TIME_IN_MILLISECONDS = 1000 * 60 * 45;
