@@ -1,0 +1,31 @@
+{
+  "en": {
+    "translation": {
+      "required": "Missing required field.",
+      "add-new-button-label": "Add new",
+      "max-length": "Must not exceed {{length}} characters.",
+      "incorrect-format": "Incorrect format and/or not satisfied minimum/maximum length.",
+      "cancel-dialog-title": "Are you sure you want to cancel?",
+      "cancel-dialog-description": "Changes you made will not be saved.",
+      "positive-integer": "Must be a positive integer number",
+      "error-something-went-wrong": "Something went wrong!",
+      "back-to-previous-dialog-title": "Are you sure back to previous step?",
+      "helper-text-upload": "Only files with the following extensions are allowed: pdf, image extension, excel. Maximum size: {{maxFileSize}} MB",
+      "end-date-after-start-date": "End date cannot be earlier than Start date.",
+      "start-date-after-current-date": "Start date cannot be earlier than current date.",
+      "start-time-after-end-time": "End time cannot be earlier than start time.",
+      "only-2-decimal-places": "Only allow 2 decimal places number.",
+      "only-numeric": "Must be only digits.",
+      "only-admin-action-description": "Only admin users can restore deleted deals.",
+      "dropdown-fetch-data-error": "Fetching data has problem. Please refresh page to reload data!"
+    },
+    "message-code": {
+      "MSG1": "Missing required field.",
+      "MSG2": "Incorrect format and/or not satisfied minimum/maximum length.",
+      "MSG3": "Login successfully",
+      "MSG4": "Something went wrong",
+      "MSG5": "Sign up successfully! Please login",
+      "MSG6": "Confirm password does not match."
+    }
+  }
+}
