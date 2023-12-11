@@ -285,7 +285,7 @@ const SignUpForm = ({ handleGoToSignInForm }) => {
         />
         <Controller
           control={control}
-          name="birthDay"
+          name="gender"
           render={({ field, fieldState }) => {
             return (
               <div className="flex gap-4 items-center">
@@ -311,7 +311,7 @@ const SignUpForm = ({ handleGoToSignInForm }) => {
                     type="radio"
                     name="gender"
                     className={clsx(styles["create-user-radio"])}
-                    value={field.value}
+                    value="male"
                     onChange={(e) => {
                       setValue("gender", e.currentTarget.value);
                     }}
