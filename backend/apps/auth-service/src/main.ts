@@ -1,5 +1,6 @@
 import express from 'express';
 import * as path from 'path';
+import cors from 'cors';
 
 import encodeRouter from './routes/encode.route';
 import decodeRouter from './routes/decode.route';
@@ -13,6 +14,7 @@ app.use(express.json()); // To parse the incoming requests with JSON payloads
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
 
 // Mount the routers
+app.use(cors());
 app.use('/encode', encodeRouter);
 app.use('/decode', decodeRouter);
 app.use('/create-credential', createCredentialRouter);
