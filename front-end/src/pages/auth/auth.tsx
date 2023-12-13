@@ -358,7 +358,7 @@ const Auth = (props: LoginProps) => {
     email: yup.string().required(requiredMsg).email(incorrectFormatMsg),
     firstName: yup.string().required(),
     lastName: yup.string().required(),
-    phoneNumber: yup.number().required(),
+    phoneNumber: yup.string().required(),
     password: yup.string().required(),
     confirmPassword: yup
       .string()
@@ -372,7 +372,7 @@ const Auth = (props: LoginProps) => {
           return true;
         },
       }),
-    birthDay: yup.string().required(),
+    birthDay: yup.date().required(),
     gender: yup.string().required(),
   });
   const registerFormMethods = useForm<ICreateUserPayload>({
