@@ -6,7 +6,11 @@ import { RequestContextService } from '@lib/shared/common/application';
 import { Err, Ok, Result } from 'oxide.ts';
 import { CreateCommentCommand } from './create-comment.command';
 import { POST_REPOSITORY } from '../post.di-token';
-import { AttachmentEntity, PostRepositoryPort } from '@lib/post/domain';
+import {
+  AttachmentEntity,
+  CreateAttachmentProps,
+  PostRepositoryPort,
+} from '@lib/post/domain';
 
 @CommandHandler(CreateCommentCommand)
 export class CreateCommentCommandHandler {
@@ -22,9 +26,16 @@ export class CreateCommentCommandHandler {
     const post = postOption.unwrap();
 
     const attachments =
-      command.attachments?.map((attachment) =>
-        AttachmentEntity.create(attachment)
-      ) || [];
+      command.attachments?.map((attachment) => {
+        const createAttachmentProps: CreateAttachmentProps = {
+          id: attachment.id,
+          type: attachment.type,
+          description: attachment.description,
+          name: attachment.name,
+          size: attachment.size,
+        };
+        return createAttachmentProps;
+      }) || [];
 
     let commentId: string;
     if (command.replyTo === command.postId) {
