@@ -206,12 +206,54 @@ export class PostRepository
                         },
                       },
                     },
+                    reacts: {
+                      deleteMany: {
+                        userId: {
+                          in: reply.reacts.map((react) => react.userId),
+                        },
+                        AND: {
+                          type: {
+                            notIn: reply.reacts.map((react) => react.type),
+                          },
+                        },
+                      },
+                      createMany: {
+                        data: reply.reacts.map((react) => ({
+                          id: v4(),
+                          type: react.type,
+                          userId: react.userId,
+                          postId: null,
+                        })),
+                        skipDuplicates: true,
+                      },
+                    },
                   },
                 })),
                 deleteMany: {
                   id: {
                     notIn: comment.replies.map((reply) => reply.id),
                   },
+                },
+              },
+              reacts: {
+                deleteMany: {
+                  userId: {
+                    in: comment.reacts.map((react) => react.userId),
+                  },
+                  AND: {
+                    type: {
+                      notIn: comment.reacts.map((react) => react.type),
+                    },
+                  },
+                },
+                createMany: {
+                  data: comment.reacts.map((react) => ({
+                    id: v4(),
+                    type: react.type,
+                    userId: react.userId,
+                    postId: null,
+                  })),
+                  skipDuplicates: true,
                 },
               },
             },
@@ -241,6 +283,21 @@ export class PostRepository
               commentId: null,
             })),
             skipDuplicates: true,
+          },
+        },
+      },
+      include: {
+        attachments: true,
+        comments: {
+          include: {
+            attachments: true,
+            reacts: true,
+            replies: {
+              include: {
+                attachments: true,
+                reacts: true,
+              },
+            },
           },
         },
       },

@@ -204,6 +204,43 @@ export class PostEntity extends AggregateRoot<PostProps> {
     this.props.attachments.splice(attachmentIndex, 1);
   }
 
+  addReactOfComment(
+    commentId: AggregateID,
+    replyTo: AggregateID,
+    reactProp: ReactProps
+  ): void {
+    let comment: CommentEntity;
+    if (replyTo === this.id) {
+      comment = this.getComment(commentId);
+    } else {
+      comment = this.getReplyToComment(replyTo, commentId);
+    }
+    if (!comment) {
+      throw new ArgumentNotProvidedException(
+        'Comment does not exist',
+        HttpStatus.BAD_REQUEST
+      );
+    }
+    const react = new ReactVO(reactProp);
+    comment.addReact(react);
+  }
+
+  removeReactOfComment(commentId: AggregateID, replyTo: AggregateID): void {
+    let comment: CommentEntity;
+    if (replyTo === this.id) {
+      comment = this.getComment(commentId);
+    } else {
+      comment = this.getReplyToComment(replyTo, commentId);
+    }
+    if (!comment) {
+      throw new ArgumentNotProvidedException(
+        'Comment does not exist',
+        HttpStatus.BAD_REQUEST
+      );
+    }
+    comment.removeReact(commentId);
+  }
+
   addReact(reactProp: ReactProps): void {
     const react = new ReactVO(reactProp);
     const reactIndex = this.props.reacts.findIndex(

@@ -31,7 +31,6 @@ const tokenDecoder: TokenDecoder =
         result = right(decoded);
       }
     });
-    console.log(result);
     return result;
   };
 
@@ -65,7 +64,7 @@ const replyJwtPayload: ReplyJwtPayload = (res) => (payload) => {
 
 const validateCredentials = (
   user: AuthRecord,
-  password: string,
+  password: string
 ): Either<Error, string> => {
   // const isValid: boolean = authenticate(email, password)
   // use monad!

@@ -8,3 +8,4 @@ export * from './lib/create-comment';
 export * from './lib/update-comment';
 export * from './lib/delete-comment';
 export * from './lib/react-post';
+export * from './lib/react-comment';

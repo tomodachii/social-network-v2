@@ -13,6 +13,7 @@ import {
   UpdateCommentCommandHandler,
   DeleteCommentCommandHandler,
   ReactPostCommandHandler,
+  ReactCommentCommandHandler,
 } from '@lib/post/feature';
 import {
   CommentHttpController,
@@ -36,6 +37,7 @@ const commandHandlers: Provider[] = [
   UpdateCommentCommandHandler,
   DeleteCommentCommandHandler,
   ReactPostCommandHandler,
+  ReactCommentCommandHandler,
 ];
 
 const queryHandlers: Provider[] = [ViewPostQueryHandler];
