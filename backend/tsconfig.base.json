@@ -22,7 +22,7 @@
       "@lib/shared/common/*": ["libs/shared/common/src/*/index.ts"],
       "@lib/shared/ddd": ["libs/shared/ddd/src/index.ts"],
       "@lib/shared/ddd-v2": ["libs/shared/ddd-v2/src/index.ts"],
-      "@lib/shared/file": ["libs/shared/file/src/index.ts"]
+      "@lib/shared/file": ["libs/shared/file/src/index.ts"],
     }
   },
   "exclude": ["node_modules", "tmp"]
