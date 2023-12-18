@@ -20,11 +20,13 @@ import {
   PostHttpController,
   ReactHttpController,
 } from './interface-adapter';
+import { UserMessageController } from './interface-adapter/user.message.controller';
 
 const httpControllers = [
   PostHttpController,
   CommentHttpController,
   ReactHttpController,
+  UserMessageController,
 ];
 
 // const messageControllers = [UserMessageController];

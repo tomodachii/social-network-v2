@@ -4,3 +4,4 @@ export * from './user.type';
 export * from './value-objects';
 export * from './ports';
 export * from './user.error';
+export * from './events';

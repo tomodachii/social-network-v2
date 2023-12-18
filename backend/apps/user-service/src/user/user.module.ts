@@ -12,10 +12,15 @@ import {
   FindUserByIdQueryHandler,
 } from './application';
 import { UserMapper } from './user.mapper';
-import { AUTH_SERVICE_PROXY, USER_REPOSITORY } from './user.di-token';
-import { UserRepository } from './infrastructure';
+import {
+  AUTH_SERVICE_PROXY,
+  USER_PUBLISHER,
+  USER_REPOSITORY,
+} from './user.di-token';
+import { KafkaConfig, UserPublisher, UserRepository } from './infrastructure';
 import { CqrsModule } from '@nestjs/cqrs';
 import { DatabaseModule } from '../database';
+import { ClientsModule } from '@nestjs/microservices';
 
 const httpControllers = [UserController];
 
@@ -33,11 +38,17 @@ const mappers: Provider[] = [UserMapper];
 
 const repositories: Provider[] = [
   { provide: USER_REPOSITORY, useClass: UserRepository },
-  { provide: AUTH_SERVICE_PROXY, useClass: HttpAuthServiceProxy },
+  { provide: AUTH_SERVICE_PROXY, useClass: MockAuthServiceProxy },
+  { provide: USER_PUBLISHER, useClass: UserPublisher },
 ];
 
 @Module({
-  imports: [CqrsModule, DatabaseModule, AuthServiceProxyModule],
+  imports: [
+    CqrsModule,
+    DatabaseModule,
+    AuthServiceProxyModule,
+    ClientsModule.register([KafkaConfig]),
+  ],
   controllers: [...httpControllers],
   providers: [
     Logger,

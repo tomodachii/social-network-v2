@@ -1,9 +1,19 @@
 import { AggregateID, Command, CommandProps } from '@lib/shared/ddd';
-import { Gender, UserEntity, UserRepositoryPort } from '../../domain';
+import {
+  Gender,
+  UserCreatedEvent,
+  UserEntity,
+  UserPublisherPort,
+  UserRepositoryPort,
+} from '../../domain';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
 import { Ok, Result } from 'oxide.ts';
-import { AUTH_SERVICE_PROXY, USER_REPOSITORY } from '../../user.di-token';
+import {
+  AUTH_SERVICE_PROXY,
+  USER_PUBLISHER,
+  USER_REPOSITORY,
+} from '../../user.di-token';
 import { AuthServiceProxyPort } from '@lib/auth-service-proxy';
 import { Exception } from '@lib/shared/common/exceptions';
 import { CreateUserResponseDto } from '../dtos';
@@ -35,9 +45,11 @@ export class CreateUserCommandHandler
 {
   constructor(
     @Inject(USER_REPOSITORY)
-    protected readonly userRepo: UserRepositoryPort,
+    private readonly userRepo: UserRepositoryPort,
     @Inject(AUTH_SERVICE_PROXY)
-    protected readonly authServiceProxy: AuthServiceProxyPort
+    private readonly authServiceProxy: AuthServiceProxyPort,
+    @Inject(USER_PUBLISHER)
+    private readonly userPublisher: UserPublisherPort
   ) {}
 
   async execute(
@@ -66,7 +78,15 @@ export class CreateUserCommandHandler
     }
 
     try {
-      this.userRepo.insertOne(user);
+      // this.userRepo.insertOne(user);
+
+      this.userPublisher.publishUserCreatedEvent(
+        new UserCreatedEvent({
+          firstName: user.firstName,
+          lastName: user.lastName,
+          aggregateId: user.id,
+        })
+      );
 
       return Ok({
         token: credential.data.token,
