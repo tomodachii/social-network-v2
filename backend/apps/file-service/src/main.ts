@@ -2,6 +2,8 @@ import express from 'express';
 import path from 'path'
 import multer from 'multer'
 import { uploadRouter } from './file/interface-adapter'
+import { saveFileData } from './file/infrastructure/file.repository';
+import * as E from 'fp-ts/lib/Either'
 
 const host = process.env.HOST ?? 'localhost';
 const port = process.env.PORT ? Number(process.env.PORT) : 3006;
@@ -27,7 +29,29 @@ app.use(express.json());
 const fileStatuses = new Map();
 
 // Endpoint for file upload
-app.post('/upload', upload.single('file'), );
+app.post('/upload', upload.single('file'), (req, res) => {
+  try {
+    // Simulated upload processing (async file write)
+    const fileId = uuidv4(); // Generate a unique ID for the file
+    const fileName = `${fileId}.txt`; // Use unique ID as file name or use original file name
+
+    // Simulated async file write operation
+    const file: Express.Multer.File = req.file
+    // await writeFile(fileName, file.buffer, 'utf8');
+    console.log(file)
+    console.log(path.join(__dirname, '..'))
+    saveFileData(path.join(__dirname, '..', 'data'), fileName)(file)().then(either => E.fold(console.log, console.log)(either))
+
+    // Store file status as UPLOADING initially
+    fileStatuses.set(fileId, 'UPLOADING');
+
+    // Return response with file ID for status checking
+    res.status(200).json({ fileId });
+  } catch (error) {
+    console.error('Error uploading file:', error);
+    res.status(500).send('Error uploading file');
+  }
+});
 
 // Endpoint to check file status
 app.get('/status/:fileId', (req, res) => {
