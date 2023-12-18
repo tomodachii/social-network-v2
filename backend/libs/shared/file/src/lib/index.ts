@@ -1,2 +1,2 @@
-export * from './adapters';
-export * from './ports';
+export * from './infrastructure'
+export * from './domain'
