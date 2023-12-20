@@ -22,7 +22,7 @@ export class ContextInterceptor implements NestInterceptor {
 
     RequestContextService.setRequestId(requestId);
     RequestContextService.setUserId(userId);
-
+    console.log(userId);
     return next.handle().pipe(
       tap(() => {
         // Perform cleaning if needed
