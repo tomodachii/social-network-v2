@@ -2,7 +2,7 @@ import { Module, Provider, Logger } from '@nestjs/common';
 import { PostMapper } from './post.mapper';
 import { CqrsModule } from '@nestjs/cqrs';
 import { DatabaseModule } from '../database';
-import { PostRepository } from './infrastructure';
+import { PostRepository } from './infrastructure-adapter';
 import {
   CreatePostCommandHandler,
   DeletePostCommandHandler,
