@@ -1,4 +1,4 @@
-import { Mapper } from '@lib/shared/ddd';
+import { Mapper } from '@lib/shared/ddd-v2';
 import {
   AddressVO,
   BioImageType,
@@ -6,8 +6,8 @@ import {
   ConfigEntity,
   Gender,
   UserEntity,
-} from './domain';
-import { UserResponseDto } from './application';
+} from '@lib/user/domain';
+import { UserResponseDto } from './interface-adapter';
 import { UserPrersistent, UserRecord } from '../database';
 
 export class UserMapper
