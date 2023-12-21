@@ -2,7 +2,7 @@ import { Module, Provider, Logger } from '@nestjs/common';
 import { PostMapper } from './post.mapper';
 import { CqrsModule } from '@nestjs/cqrs';
 import { DatabaseModule } from '../database';
-import { PostRepository } from './infrastructure';
+import { PostRepository } from './infrastructure-adapter';
 import {
   CreatePostCommandHandler,
   DeletePostCommandHandler,
@@ -20,11 +20,13 @@ import {
   PostHttpController,
   ReactHttpController,
 } from './interface-adapter';
+import { UserMessageController } from './interface-adapter/user.message.controller';
 
 const httpControllers = [
   PostHttpController,
   CommentHttpController,
   ReactHttpController,
+  UserMessageController,
 ];
 
 // const messageControllers = [UserMessageController];

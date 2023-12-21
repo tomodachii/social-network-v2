@@ -32,21 +32,33 @@ npm i
 3. Run prisma migration for each service (will update later to run for all service)
 
 ```
-nx prisma-migrate auth-service --name=
-nx prisma-migrate user-service --name=
+npx nx prisma-migrate auth-service --name=
+npx nx prisma-migrate user-service --name=
 ```
 
-4. Run necessary services (also update later to run many services in one command)
+or run for all services
 
 ```
-nx serve user-service
-nx serve auth-service
+npx nx run-many -t prisma-migrate --name=
+```
+
+4. Run necessary services
+
+```
+npx nx serve user-service
+npx nx serve auth-service
 ```
 
 or run all service
 
 ```
-nx run-many -t serve --exclude sample-service --parallel=4
+npx nx run-many -t serve --exclude sample-service --parallel=4
+```
+
+5. Run migration nx if necessary
+
+```
+nx migrate --run-migrations
 ```
 
 ## Create service with nx

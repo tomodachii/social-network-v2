@@ -123,5 +123,5 @@
       }
     }
   },
-  "tags": ["scope:post-service", "type:app"]
+  "tags": ["scope:post", "type:app"]
 }
