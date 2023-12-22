@@ -2,7 +2,7 @@ import express from 'express';
 import path from 'path'
 import multer from 'multer'
 import { uploadRouter } from './file/interface-adapter'
-import { saveFileData } from './file/infrastructure/file.repository';
+import { saveFile } from './file/infrastructure-adapter/file.repository';
 import * as E from 'fp-ts/lib/Either'
 
 const host = process.env.HOST ?? 'localhost';
@@ -40,7 +40,7 @@ app.post('/upload', upload.single('file'), (req, res) => {
     // await writeFile(fileName, file.buffer, 'utf8');
     console.log(file)
     console.log(path.join(__dirname, '..'))
-    saveFileData(path.join(__dirname, '..', 'data'), fileName)(file)().then(either => E.fold(console.log, console.log)(either))
+    saveFile(path.join(__dirname, '..', 'data'), fileName)(file)().then(either => E.fold(console.log, console.log)(either))
 
     // Store file status as UPLOADING initially
     fileStatuses.set(fileId, 'UPLOADING');
