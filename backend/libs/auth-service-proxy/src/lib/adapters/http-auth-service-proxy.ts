@@ -23,12 +23,21 @@ export class HttpAuthServiceProxy implements AuthServiceProxyPort {
           credential
         )
       );
+    const { data, meta } = result.data;
+
     return Promise.resolve(
-      new BaseResponse<CreateCredentialResponse>(result.data.data)
+      new BaseResponse<CreateCredentialResponse>(data, meta)
     );
   }
 
-  rollbackSaveCredential(userId: string): Promise<BaseResponse<boolean>> {
-    return Promise.resolve(new BaseResponse<boolean>(true));
+  async rollbackSaveCredential(userId: string): Promise<BaseResponse<boolean>> {
+    const result: AxiosResponse<BaseResponse<boolean>> = await firstValueFrom(
+      this.httpService.post('http://localhost:3001/rollback-credential', {
+        userId,
+      })
+    );
+
+    const { data, meta } = result.data;
+    return Promise.resolve(new BaseResponse<boolean>(data, meta));
   }
 }
