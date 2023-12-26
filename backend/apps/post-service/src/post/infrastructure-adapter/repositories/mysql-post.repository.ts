@@ -6,23 +6,19 @@ import {
   PostRecord,
   PrismaPostService,
   ReactRecord,
-} from './../../../database';
+} from '@lib/post/data-access';
 import { BaseRepository } from '@lib/shared/common/databases';
 import { Injectable, Logger } from '@nestjs/common';
-import {
-  PostEntity,
-  CommentEntity,
-  PostRepositoryPort,
-} from '@lib/post/domain';
+import { PostEntity, CommentEntity, PostRepository } from '@lib/post/domain';
 import { EventBus } from '@nestjs/cqrs';
 import { PostMapper } from '../../post.mapper';
 import { Ok, Option, Result } from 'oxide.ts';
 import { v4 } from 'uuid';
 
 @Injectable()
-export class PostRepository
+export class MysqlPostRepository
   extends BaseRepository<PostEntity, PostRecord>
-  implements PostRepositoryPort
+  implements PostRepository
 {
   constructor(
     protected readonly mapper: PostMapper,
