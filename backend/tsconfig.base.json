@@ -16,12 +16,18 @@
     "baseUrl": ".",
     "paths": {
       "@lib/auth-service-proxy": ["libs/auth-service-proxy/src/index.ts"],
+      "@lib/post/data-access": ["libs/post/data-access-post/src/index.ts"],
       "@lib/post/domain": ["libs/post/domain-post/src/index.ts"],
       "@lib/post/feature": ["libs/post/feature-post/src/index.ts"],
+      "@lib/post/replica-user": ["libs/post/replica-user/src/index.ts"],
       "@lib/shared/common/*": ["libs/shared/common/src/*/index.ts"],
       "@lib/shared/ddd": ["libs/shared/ddd/src/index.ts"],
       "@lib/shared/ddd-v2": ["libs/shared/ddd-v2/src/index.ts"],
+      "@lib/shared/service-interface": [
+        "libs/shared/service-interface/src/index.ts"
+      ],
       "@lib/shared/file": ["libs/shared/file/src/index.ts"],
+      "@lib/user/data-access": ["libs/user/data-access-user/src/index.ts"],
       "@lib/user/domain": ["libs/user/domain-user/src/index.ts"],
       "@lib/user/feature": ["libs/user/feature-user/src/index.ts"]
     }
