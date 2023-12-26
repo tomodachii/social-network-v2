@@ -1,4 +1,4 @@
-import { AggregateID, DomainEvent, DomainEventProps } from '@lib/shared/ddd';
+import { AggregateID, DomainEvent, DomainEventProps } from '@lib/shared/ddd-v2';
 import { AttachmentEntity } from '../entities';
 
 export class CommentCreatedEvent extends DomainEvent {
