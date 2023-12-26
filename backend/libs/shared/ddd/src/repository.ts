@@ -30,4 +30,4 @@ export type PaginatedQueryParams = {
   orderBy: OrderBy;
 };
 
-export interface RepositoryPort<Entity> {}
+export interface Repository<Entity> {}
