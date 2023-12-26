@@ -1,4 +1,4 @@
-import { ValueObject } from '@lib/shared/ddd';
+import { ValueObject } from '@lib/shared/ddd-v2';
 import { Guard } from '@lib/shared/common/utils';
 import { ArgumentOutOfRangeException } from '@lib/shared/common/exceptions';
 import { HttpStatus } from '@lib/shared/common/api';
