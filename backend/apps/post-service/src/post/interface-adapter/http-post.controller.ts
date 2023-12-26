@@ -19,7 +19,7 @@ import {
 } from '@lib/post/feature';
 
 @Controller('posts')
-export class PostHttpController {
+export class HttpPostController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus

@@ -10,7 +10,7 @@ import {
 } from '@lib/post/feature';
 
 @Controller('posts/:postId/comments')
-export class CommentHttpController {
+export class HttpCommentController {
   constructor(private readonly commandBus: CommandBus) {}
 
   @Post()

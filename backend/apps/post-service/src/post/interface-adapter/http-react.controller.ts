@@ -6,7 +6,7 @@ import { ReactCommentDto, ReactPostDto } from './dtos';
 import { ReactCommentCommand, ReactPostCommand } from '@lib/post/feature';
 
 @Controller('posts/:postId/reacts')
-export class ReactHttpController {
+export class HttpReactController {
   constructor(private readonly commandBus: CommandBus) {}
 
   @Post('')
