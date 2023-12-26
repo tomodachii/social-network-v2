@@ -1,2 +1,2 @@
 export * from './kafka-client.config';
-export * from './user.publisher';
+export * from './kafka-user.producer';

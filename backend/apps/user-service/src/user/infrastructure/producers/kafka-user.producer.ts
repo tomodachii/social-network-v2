@@ -1,16 +1,17 @@
+import { UserCreatedEvent, UserPattern } from '@lib/shared/service-interface';
 import { Inject, Logger } from '@nestjs/common';
 import { ClientKafka } from '@nestjs/microservices';
-import { UserCreatedEvent, UserPublisherPort } from '@lib/user/domain';
-import { USER_KAFKA_CLIENT } from '../../user.di-token';
+import { UserProducer } from '@lib/user/domain';
+import { USER_KAFKA_CLIENT } from '@lib/user/feature';
 
-export class UserPublisher implements UserPublisherPort {
+export class KafkaUserProducer implements UserProducer {
   constructor(
     @Inject(USER_KAFKA_CLIENT) private readonly kafkaClient: ClientKafka,
     private logger: Logger
   ) {}
 
   publishUserCreatedEvent(user: UserCreatedEvent): void {
-    this.kafkaClient.emit('user.created', user);
+    this.kafkaClient.emit(UserPattern.UserCreated, JSON.stringify(user));
     this.logger.log(
       `User created event published: ${JSON.stringify(user)}`,
       'user-service'

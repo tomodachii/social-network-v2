@@ -1,15 +1,15 @@
 import { BaseRepository } from '@lib/shared/common/databases';
-import { BioImageType, UserEntity, UserRepositoryPort } from '@lib/user/domain';
-import { PrismaUserService, UserRecord } from '../../../database';
+import { BioImageType, UserEntity, UserRepository } from '@lib/user/domain';
+import { PrismaUserService, UserRecord } from '@lib/user/data-access';
 import { EventBus } from '@nestjs/cqrs';
 import { UserMapper } from '../../user.mapper';
 import { Logger, Injectable } from '@nestjs/common';
 import { None, Option, Some } from 'oxide.ts';
 
 @Injectable()
-export class UserRepository
+export class MysqlUserRepository
   extends BaseRepository<any, UserRecord>
-  implements UserRepositoryPort
+  implements UserRepository
 {
   constructor(
     protected readonly mapper: UserMapper,

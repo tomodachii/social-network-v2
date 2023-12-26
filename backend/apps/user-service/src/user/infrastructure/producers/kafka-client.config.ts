@@ -1,15 +1,13 @@
 import { ClientProviderOptions, Transport } from '@nestjs/microservices';
-import { logLevel } from 'kafkajs';
-import { USER_KAFKA_CLIENT } from '../../user.di-token';
+import { USER_KAFKA_CLIENT } from '@lib/user/feature';
 
 export const KafkaConfig: ClientProviderOptions = {
   name: USER_KAFKA_CLIENT,
   transport: Transport.KAFKA,
   options: {
     client: {
-      ssl: true,
       clientId: 'user-service',
-      brokers: ['localhost:9092'],
+      brokers: ['localhost:29092'],
       connectionTimeout: 30000,
     },
     consumer: {
