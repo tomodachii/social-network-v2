@@ -11,7 +11,7 @@ export class AppRequestContext extends RequestContext {
 
 export class RequestContextService {
   static getContext(): AppRequestContext {
-    const ctx: AppRequestContext = RequestContext.currentContext.req;
+    const ctx: AppRequestContext = RequestContext.currentContext?.req;
     return ctx;
   }
 
