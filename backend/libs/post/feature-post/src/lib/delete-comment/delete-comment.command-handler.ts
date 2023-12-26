@@ -6,7 +6,7 @@ import { Err, Result } from 'oxide.ts';
 import { RequestContextService } from '@lib/shared/common/application';
 import { DeleteCommentCommand } from './delete-comment.command';
 import { POST_REPOSITORY } from '../post.di-token';
-import { PostRepositoryPort } from '@lib/post/domain';
+import { PostRepository } from '@lib/post/domain';
 
 @CommandHandler(DeleteCommentCommand)
 export class DeleteCommentCommandHandler
@@ -14,7 +14,7 @@ export class DeleteCommentCommandHandler
 {
   constructor(
     @Inject(POST_REPOSITORY)
-    private readonly repo: PostRepositoryPort
+    private readonly repo: PostRepository
   ) {}
 
   async execute(

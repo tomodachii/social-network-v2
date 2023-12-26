@@ -5,14 +5,14 @@ import { HttpStatus } from '@lib/shared/common/api';
 import { RequestContextService } from '@lib/shared/common/application';
 import { Err, Result } from 'oxide.ts';
 import { UpdateCommentCommand } from './update-comment.command';
-import { AttachmentEntity, PostRepositoryPort } from '@lib/post/domain';
+import { AttachmentEntity, PostRepository } from '@lib/post/domain';
 import { POST_REPOSITORY } from '../post.di-token';
 
 @CommandHandler(UpdateCommentCommand)
 export class UpdateCommentCommandHandler {
   constructor(
     @Inject(POST_REPOSITORY)
-    private readonly repo: PostRepositoryPort
+    private readonly repo: PostRepository
   ) {}
   async execute(command: UpdateCommentCommand) {
     const postOption = await this.repo.findPostById(command.postId);

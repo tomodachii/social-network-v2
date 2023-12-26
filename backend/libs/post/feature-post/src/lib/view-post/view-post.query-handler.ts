@@ -1,6 +1,6 @@
 import { QueryBase } from '@lib/shared/ddd';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { PrismaPostService } from 'apps/post-service/src/database';
+import { PrismaPostService } from '@lib/post/data-access';
 
 export class ViewPostQuery extends QueryBase {
   constructor(public readonly id: string) {
