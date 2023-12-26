@@ -1,4 +1,4 @@
-import { AggregateID, ValueObject } from '@lib/shared/ddd';
+import { AggregateID, ValueObject } from '@lib/shared/ddd-v2';
 import { ReactType } from '../post.type';
 
 export interface ReactProps {

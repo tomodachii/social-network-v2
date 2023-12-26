@@ -7,28 +7,26 @@ import {
 } from '@lib/shared/common/application';
 import { RequestContextModule } from 'nestjs-request-context';
 import { UserModule } from './user/user.module';
-import { DatabaseModule, PrismaUserService } from './database';
 
 const interceptors = [
   {
     provide: APP_INTERCEPTOR,
     useClass: ContextInterceptor,
   },
-  {
-    provide: APP_INTERCEPTOR,
-    useClass: ExceptionInterceptor,
-  },
+  // {
+  //   provide: APP_INTERCEPTOR,
+  //   useClass: ExceptionInterceptor,
+  // },
 ];
 
 @Module({
   imports: [
     RequestContextModule,
     CqrsModule,
-    DatabaseModule,
     // Modules
     UserModule,
   ],
   controllers: [],
-  providers: [...interceptors, PrismaUserService],
+  providers: [...interceptors],
 })
 export class AppModule {}

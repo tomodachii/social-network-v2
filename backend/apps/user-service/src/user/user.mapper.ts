@@ -8,7 +8,7 @@ import {
   UserEntity,
 } from '@lib/user/domain';
 import { UserResponseDto } from './interface-adapter';
-import { UserPrersistent, UserRecord } from '../database';
+import { UserPrersistent, UserRecord } from '@lib/user/data-access';
 
 export class UserMapper
   implements Mapper<UserEntity, UserRecord, UserResponseDto>

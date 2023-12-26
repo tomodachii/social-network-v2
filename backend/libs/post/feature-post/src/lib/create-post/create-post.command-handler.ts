@@ -5,7 +5,7 @@ import { Err, Ok, Result } from 'oxide.ts';
 import { Exception } from '@lib/shared/common/exceptions';
 import { HttpStatus } from '@lib/shared/common/api';
 import { CreatePostCommand } from './create-post.command';
-import { PostEntity, PostRepositoryPort } from '@lib/post/domain';
+import { PostEntity, PostRepository } from '@lib/post/domain';
 import { POST_REPOSITORY } from '../post.di-token';
 import { Guard } from '@lib/shared/common/utils';
 
@@ -15,7 +15,7 @@ export class CreatePostCommandHandler
 {
   constructor(
     @Inject(POST_REPOSITORY)
-    protected readonly repo: PostRepositoryPort
+    protected readonly repo: PostRepository
   ) {}
 
   async execute(command: CreatePostCommand): Promise<Result<string, Error>> {

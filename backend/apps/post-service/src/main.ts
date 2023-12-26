@@ -17,31 +17,30 @@ async function bootstrap() {
   const httpAdapter = app.get(HttpAdapterHost);
   app.useGlobalFilters(new AllExceptionsFilter(httpAdapter, 'Post service'));
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
-
-  // app.connectMicroservice<MicroserviceOptions>({
-  //   transport: Transport.KAFKA,
-  //   options: {
-  //     client: {
-  //       ssl: true,
-  //       clientId: 'post-service',
-  //       brokers: ['localhost:9092'],
-  //       connectionTimeout: 300000,
-  //       retry: {
-  //         initialRetryTime: 100,
-  //         retries: 8,
-  //       },
-  //     },
-  //     consumer: {
-  //       groupId: 'post-consumer',
-  //       allowAutoTopicCreation: true,
-  //     },
-  //     producer: {
-  //       allowAutoTopicCreation: true,
-  //     },
-  //   },
-  // });
-  // await app.startAllMicroservices();
   await app.listen(port);
+  app.connectMicroservice<MicroserviceOptions>({
+    transport: Transport.KAFKA,
+    options: {
+      client: {
+        clientId: 'post-service',
+        brokers: ['localhost:29092'],
+        connectionTimeout: 300000,
+        retry: {
+          initialRetryTime: 100,
+          retries: 8,
+        },
+      },
+      consumer: {
+        groupId: 'post-consumer',
+        allowAutoTopicCreation: true,
+      },
+      producer: {
+        allowAutoTopicCreation: true,
+      },
+    },
+  });
+  await app.startAllMicroservices();
+
   Logger.log(`🚀 Post service is running on: http://localhost:${port}`);
 }
 

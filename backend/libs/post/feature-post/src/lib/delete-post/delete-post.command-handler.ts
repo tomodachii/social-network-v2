@@ -5,7 +5,7 @@ import { HttpStatus } from '@lib/shared/common/api';
 import { Err, Result } from 'oxide.ts';
 import { RequestContextService } from '@lib/shared/common/application';
 import { POST_REPOSITORY } from '../post.di-token';
-import { PostRepositoryPort } from '@lib/post/domain';
+import { PostRepository } from '@lib/post/domain';
 
 export class DeletePostCommand {
   constructor(public readonly id: string) {}
@@ -17,7 +17,7 @@ export class DeletePostCommandHandler
 {
   constructor(
     @Inject(POST_REPOSITORY)
-    private readonly repo: PostRepositoryPort
+    private readonly repo: PostRepository
   ) {}
 
   async execute(command: DeletePostCommand): Promise<Result<boolean, Error>> {

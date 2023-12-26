@@ -1,4 +1,4 @@
-import { PrismaUserService, UserRecord } from 'apps/user-service/src/database';
+import { PrismaUserService } from '@lib/user/data-access';
 import { Ok, Result } from 'oxide.ts';
 import { FindUserByIdQuery } from './find-user-by-id.query';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';

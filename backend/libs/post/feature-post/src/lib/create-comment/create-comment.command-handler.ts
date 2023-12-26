@@ -9,14 +9,14 @@ import { POST_REPOSITORY } from '../post.di-token';
 import {
   AttachmentEntity,
   CreateAttachmentProps,
-  PostRepositoryPort,
+  PostRepository,
 } from '@lib/post/domain';
 
 @CommandHandler(CreateCommentCommand)
 export class CreateCommentCommandHandler {
   constructor(
     @Inject(POST_REPOSITORY)
-    private readonly repo: PostRepositoryPort
+    private readonly repo: PostRepository
   ) {}
   async execute(command: CreateCommentCommand): Promise<Result<string, Error>> {
     const postOption = await this.repo.findPostById(command.postId);

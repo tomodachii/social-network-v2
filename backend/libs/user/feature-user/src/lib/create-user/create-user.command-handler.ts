@@ -1,17 +1,13 @@
+import { UserCreatedEvent } from '@lib/shared/service-interface';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { CreateUserCommand } from './create-user.command';
 import {
   AUTH_SERVICE_PROXY,
-  USER_PUBLISHER,
+  USER_PRODUCER,
   USER_REPOSITORY,
 } from '../user.di-token';
 import { Inject } from '@nestjs/common';
-import {
-  UserCreatedEvent,
-  UserEntity,
-  UserPublisherPort,
-  UserRepositoryPort,
-} from '@lib/user/domain';
+import { UserEntity, UserProducer, UserRepository } from '@lib/user/domain';
 import { AuthServiceProxyPort } from '@lib/auth-service-proxy';
 import { Ok, Result } from 'oxide.ts';
 import { Exception } from '@lib/shared/common/exceptions';
@@ -23,11 +19,11 @@ export class CreateUserCommandHandler
 {
   constructor(
     @Inject(USER_REPOSITORY)
-    private readonly userRepo: UserRepositoryPort,
+    private readonly userRepo: UserRepository,
     @Inject(AUTH_SERVICE_PROXY)
     private readonly authServiceProxy: AuthServiceProxyPort,
-    @Inject(USER_PUBLISHER)
-    private readonly userPublisher: UserPublisherPort
+    @Inject(USER_PRODUCER)
+    private readonly userProducer: UserProducer
   ) {}
 
   async execute(
@@ -40,6 +36,27 @@ export class CreateUserCommandHandler
       birthDay: command.birthDay,
     });
 
+    const credential = await this.createCredential(user, command);
+
+    try {
+      await this.userRepo.insertOne(user);
+
+      this.publishEvent(user);
+
+      return Ok({
+        token: credential.data.token,
+        refreshToken: credential.data.refreshToken,
+        expired: credential.data.expired,
+        userId: user.id,
+      });
+    } catch (error: unknown) {
+      // Todos rollback
+      await this.authServiceProxy.rollbackSaveCredential(user.id);
+      throw error;
+    }
+  }
+
+  private async createCredential(user: UserEntity, command: CreateUserCommand) {
     const credential = await this.authServiceProxy.createCredentials({
       userId: user.id,
       fullName: user.fullName,
@@ -54,28 +71,16 @@ export class CreateUserCommandHandler
         credential.meta.status
       );
     }
+    return credential;
+  }
 
-    try {
-      this.userRepo.insertOne(user);
-
-      this.userPublisher.publishUserCreatedEvent(
-        new UserCreatedEvent({
-          firstName: user.firstName,
-          lastName: user.lastName,
-          aggregateId: user.id,
-        })
-      );
-
-      return Ok({
-        token: credential.data.token,
-        refreshToken: credential.data.refreshToken,
-        expired: credential.data.expired,
-        userId: user.id,
-      });
-    } catch (error: any) {
-      // Todos rollback
-      await this.authServiceProxy.rollbackSaveCredential(user.id);
-      throw error;
-    }
+  private publishEvent(user: UserEntity) {
+    const userCreatedEvent: UserCreatedEvent = {
+      firstName: user.firstName,
+      lastName: user.lastName,
+      id: user.id,
+      version: 0,
+    };
+    this.userProducer.publishUserCreatedEvent(userCreatedEvent);
   }
 }
