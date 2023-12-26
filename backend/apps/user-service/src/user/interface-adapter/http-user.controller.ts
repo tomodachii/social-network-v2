@@ -25,7 +25,7 @@ import {
 } from '@lib/user/feature';
 
 @Controller('users')
-export class UserController {
+export class HttpUserController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus
