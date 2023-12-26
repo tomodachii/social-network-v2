@@ -15,7 +15,7 @@ import {
   AttachmentRecord,
   PostRecord,
   CommentRecord,
-} from '../database';
+} from '@lib/post/data-access';
 
 export class PostMapper implements Mapper<PostEntity, PostRecord> {
   toResponse(entity: PostEntity) {
