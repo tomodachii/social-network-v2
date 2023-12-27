@@ -5,14 +5,14 @@ import { HttpStatus } from '@lib/shared/common/api';
 import { RequestContextService } from '@lib/shared/common/application';
 import { Err, Result } from 'oxide.ts';
 import { POST_REPOSITORY } from '../post.di-token';
-import { PostRepositoryPort } from '@lib/post/domain';
+import { PostRepository } from '@lib/post/domain';
 import { ReactCommentCommand } from './react-comment.command';
 
 @CommandHandler(ReactCommentCommand)
 export class ReactCommentCommandHandler {
   constructor(
     @Inject(POST_REPOSITORY)
-    private readonly repo: PostRepositoryPort
+    private readonly repo: PostRepository
   ) {}
 
   async execute(command: ReactCommentCommand) {

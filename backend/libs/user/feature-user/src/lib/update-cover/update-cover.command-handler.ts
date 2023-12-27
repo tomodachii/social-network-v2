@@ -2,13 +2,13 @@ import { Inject } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UpdateCoverCommand } from './update-cover.command';
 import { USER_REPOSITORY } from '../user.di-token';
-import { UserNotFoundError, UserRepositoryPort } from '@lib/user/domain';
+import { UserNotFoundError, UserRepository } from '@lib/user/domain';
 
 @CommandHandler(UpdateCoverCommand)
 export class UpdateCoverCommandHandler implements ICommandHandler {
   constructor(
     @Inject(USER_REPOSITORY)
-    protected readonly userRepo: UserRepositoryPort
+    protected readonly userRepo: UserRepository
   ) {}
 
   async execute(command: UpdateCoverCommand): Promise<boolean> {

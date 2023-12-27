@@ -1,2 +1,2 @@
 export * from './repositories';
-export * from './publishers';
+export * from './producers';

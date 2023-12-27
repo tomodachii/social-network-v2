@@ -1,4 +1,4 @@
-export * from './post.http.controller';
-export * from './comment.http.controller';
-export * from './react.http.controller';
+export * from './http-post.controller';
+export * from './http-comment.controller';
+export * from './http-react.controller';
 export * from './dtos';

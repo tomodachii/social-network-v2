@@ -24,6 +24,29 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const { httpAdapter } = this.httpAdapterHost;
 
     const ctx = host.switchToHttp();
+
+    if (exception.hasOwnProperty('response')) {
+      const message = exception.response?.message || '';
+      const responseBody = {
+        meta: {
+          isSuccess: false,
+          message: message,
+          status: exception.status,
+          serviceId: this.serviceName,
+          extraMeta: {},
+        },
+        data: null,
+      };
+
+      Logger.debug(
+        `[${RequestContextService.getRequestId()}] ${message}`,
+        this.serviceName
+      );
+
+      httpAdapter.reply(ctx.getResponse(), responseBody, exception.status);
+      return;
+    }
+
     Logger.debug(
       `[${RequestContextService.getRequestId()}] ${exception.message}: ${
         exception.stack
@@ -32,6 +55,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     );
     let responseBody: BaseResponse<null>;
     let httpStatus: HttpStatus;
+
     if (exception?.message) {
       httpStatus = exception.status ? exception.status : HttpStatus.BAD_REQUEST;
 

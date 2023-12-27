@@ -6,13 +6,13 @@ import { RequestContextService } from '@lib/shared/common/application';
 import { Err, Result } from 'oxide.ts';
 import { ReactPostCommand } from './react-post.command';
 import { POST_REPOSITORY } from '../post.di-token';
-import { PostRepositoryPort } from '@lib/post/domain';
+import { PostRepository } from '@lib/post/domain';
 
 @CommandHandler(ReactPostCommand)
 export class ReactPostCommandHandler {
   constructor(
     @Inject(POST_REPOSITORY)
-    private readonly repo: PostRepositoryPort
+    private readonly repo: PostRepository
   ) {}
 
   async execute(command: ReactPostCommand) {

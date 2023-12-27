@@ -2,13 +2,13 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UpdateAvatarCommand } from './update-avatar.command';
 import { USER_REPOSITORY } from '../user.di-token';
 import { Inject } from '@nestjs/common';
-import { UserNotFoundError, UserRepositoryPort } from '@lib/user/domain';
+import { UserNotFoundError, UserRepository } from '@lib/user/domain';
 
 @CommandHandler(UpdateAvatarCommand)
 export class UpdateAvatarCommandHandler implements ICommandHandler {
   constructor(
     @Inject(USER_REPOSITORY)
-    protected readonly userRepo: UserRepositoryPort
+    protected readonly userRepo: UserRepository
   ) {}
 
   async execute(command: UpdateAvatarCommand): Promise<boolean> {

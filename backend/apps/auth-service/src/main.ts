@@ -5,6 +5,7 @@ import cors from 'cors';
 import encodeRouter from './routes/encode.route';
 import decodeRouter from './routes/decode.route';
 import createCredentialRouter from './routes/create-credential.route';
+import rollbackCredentialRouter from './routes/rollback-credential.route';
 
 const app = express();
 
@@ -18,6 +19,7 @@ app.use(cors());
 app.use('/encode', encodeRouter);
 app.use('/decode', decodeRouter);
 app.use('/create-credential', createCredentialRouter);
+app.use('/rollback-credential', rollbackCredentialRouter);
 
 const port = process.env.PORT || 3001;
 const server = app.listen(port, () => {

@@ -1,5 +1,6 @@
 import {
   IsDate,
+  IsDateString,
   IsEmail,
   IsEnum,
   IsPhoneNumber,
@@ -32,7 +33,7 @@ export class CreateUserDto {
   @Matches(/^[a-zA-Z ]*$/)
   lastName: string;
 
-  @IsDate()
+  @IsDateString()
   @ApiProperty()
   birthDay: Date;
 

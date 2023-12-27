@@ -1,2 +1,2 @@
-export * from './user.repository.port';
-export * from './user.publisher.port';
+export * from './user.repository';
+export * from './user.producer';

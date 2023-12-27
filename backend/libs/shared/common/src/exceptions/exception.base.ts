@@ -29,6 +29,8 @@ export class Exception extends Error {
 
   public readonly correlationId: string;
 
+  public readonly response?: any;
+
   /**
    * @param {string} message
    * @param {ObjectLiteral} [metadata={}]

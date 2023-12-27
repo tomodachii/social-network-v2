@@ -1,8 +1,8 @@
 import { Module, Provider, Logger } from '@nestjs/common';
 import { PostMapper } from './post.mapper';
 import { CqrsModule } from '@nestjs/cqrs';
-import { DatabaseModule } from '../database';
-import { PostRepository } from './infrastructure-adapter';
+import { DataAccessPostModule } from '@lib/post/data-access';
+import { MysqlPostRepository } from './infrastructure-adapter';
 import {
   CreatePostCommandHandler,
   DeletePostCommandHandler,
@@ -16,17 +16,18 @@ import {
   ReactCommentCommandHandler,
 } from '@lib/post/feature';
 import {
-  CommentHttpController,
-  PostHttpController,
-  ReactHttpController,
+  HttpCommentController,
+  HttpPostController,
+  HttpReactController,
 } from './interface-adapter';
-import { UserMessageController } from './interface-adapter/user.message.controller';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { ContextInterceptor } from '@lib/shared/common/application';
+import { RequestContextModule } from 'nestjs-request-context';
 
 const httpControllers = [
-  PostHttpController,
-  CommentHttpController,
-  ReactHttpController,
-  UserMessageController,
+  HttpPostController,
+  HttpCommentController,
+  HttpReactController,
 ];
 
 // const messageControllers = [UserMessageController];
@@ -49,12 +50,22 @@ const mappers: Provider[] = [PostMapper];
 const repositories: Provider[] = [
   {
     provide: POST_REPOSITORY,
-    useClass: PostRepository,
+    useClass: MysqlPostRepository,
   },
 ];
 
+const interceptors = [
+  {
+    provide: APP_INTERCEPTOR,
+    useClass: ContextInterceptor,
+  },
+  // {
+  //   provide: APP_INTERCEPTOR,
+  //   useClass: ExceptionInterceptor,
+  // },
+];
 @Module({
-  imports: [CqrsModule, DatabaseModule],
+  imports: [CqrsModule, DataAccessPostModule, RequestContextModule],
   controllers: [...httpControllers],
   providers: [
     Logger,
@@ -62,6 +73,7 @@ const repositories: Provider[] = [
     ...commandHandlers,
     ...queryHandlers,
     ...mappers,
+    ...interceptors,
   ],
 })
 export class PostModule {}

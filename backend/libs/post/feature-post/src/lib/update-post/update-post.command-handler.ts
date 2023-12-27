@@ -5,7 +5,7 @@ import { HttpStatus } from '@lib/shared/common/api';
 import { RequestContextService } from '@lib/shared/common/application';
 import { Err, Result } from 'oxide.ts';
 import { UpdatePostCommand } from './update-post.command';
-import { PostRepositoryPort } from '@lib/post/domain';
+import { PostRepository } from '@lib/post/domain';
 import { POST_REPOSITORY } from '../post.di-token';
 
 @CommandHandler(UpdatePostCommand)
@@ -14,7 +14,7 @@ export class UpdatePostCommandHandler
 {
   constructor(
     @Inject(POST_REPOSITORY)
-    protected readonly repo: PostRepositoryPort
+    protected readonly repo: PostRepository
   ) {}
 
   async execute(command: UpdatePostCommand): Promise<Result<boolean, Error>> {
