@@ -1,4 +1,8 @@
-import { UserCreatedEvent, UserPattern } from '@lib/shared/service-interface';
+import {
+  AvatarUpdatedEvent,
+  UserCreatedEvent,
+  UserPattern,
+} from '@lib/shared/service-interface';
 import { Inject, Logger } from '@nestjs/common';
 import { ClientKafka } from '@nestjs/microservices';
 import { UserProducer } from '@lib/user/domain';
@@ -14,6 +18,14 @@ export class KafkaUserProducer implements UserProducer {
     this.kafkaClient.emit(UserPattern.UserCreated, JSON.stringify(user));
     this.logger.log(
       `User created event published: ${JSON.stringify(user)}`,
+      'user-service'
+    );
+  }
+
+  publishAvatarUpdatedEvent(avatar: AvatarUpdatedEvent): void {
+    this.kafkaClient.emit(UserPattern.AvatarUpdated, JSON.stringify(avatar));
+    this.logger.log(
+      `Avatar updated event published: ${JSON.stringify(avatar)}`,
       'user-service'
     );
   }

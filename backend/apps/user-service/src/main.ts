@@ -15,7 +15,7 @@ async function bootstrap() {
   app.enableCors();
 
   const httpAdapter = app.get(HttpAdapterHost);
-  app.useGlobalFilters(new AllExceptionsFilter(httpAdapter, 'Post service'));
+  app.useGlobalFilters(new AllExceptionsFilter(httpAdapter, 'User service'));
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
 
   await app.listen(port);

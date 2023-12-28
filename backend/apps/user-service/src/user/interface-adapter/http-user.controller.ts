@@ -61,16 +61,14 @@ export class HttpUserController {
     return new BaseResponse<UserResponseDto>(result.unwrap());
   }
 
-  @Put(':userId/avatar')
+  @Put('avatar')
   async updateAvatar(
-    @Param('userId') userId: string,
     @Body() body: UpdateBioImageDto
   ): Promise<BaseResponse<boolean>> {
     const command = new UpdateAvatarCommand({
       fileId: body.id,
       extension: body.extension,
       size: body.size,
-      userId: userId,
     });
 
     const result: boolean = await this.commandBus.execute(command);

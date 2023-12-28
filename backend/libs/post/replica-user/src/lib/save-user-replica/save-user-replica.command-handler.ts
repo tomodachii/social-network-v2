@@ -14,18 +14,17 @@ export class SaveUserReplicaCommandHandler
   async execute(
     command: SaveUserReplicaCommand
   ): Promise<Result<boolean, Error>> {
-    const user = await this.prisma.userRecord.findUnique({
-      where: {
-        userId: command.userId,
-      },
-    });
+    // const user = await this.prisma.userRecord.findUnique({
+    //   where: {
+    //     userId: command.userId,
+    //   },
+    // });
 
-    if (user && user.version !== command.version + 1) {
-      // return Err(
-      //   new Exception('Version mismatch', HttpStatus.UNPROCESSABLE_ENTITY)
-      // );
-      return Ok(false);
-    }
+    // if (user && user.version !== command.version + 1) {
+    //   return Err(
+    //     new Exception('Version mismatch', HttpStatus.UNPROCESSABLE_ENTITY)
+    //   );
+    // }
 
     await this.prisma.userRecord.upsert({
       where: {

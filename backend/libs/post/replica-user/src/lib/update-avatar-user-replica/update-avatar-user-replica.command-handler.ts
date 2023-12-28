@@ -13,19 +13,19 @@ export class UpdateAvatarUserReplicaCommandHandler
   async execute(
     command: UpdateAvatarUserReplicaCommand
   ): Promise<Result<boolean, Error>> {
-    const user = await this.prisma.userRecord.findUnique({
-      where: {
-        userId: command.userId,
-      },
-    });
+    // const user = await this.prisma.userRecord.findUnique({
+    //   where: {
+    //     userId: command.userId,
+    //   },
+    // });
 
-    if (user && user.version !== command.version + 1) {
-      return Err(
-        new Exception('Version mismatch', HttpStatus.UNPROCESSABLE_ENTITY)
-      );
-    }
+    // if (user && user.version !== command.version + 1) {
+    //   return Err(
+    //     new Exception('Version mismatch', HttpStatus.UNPROCESSABLE_ENTITY)
+    //   );
+    // }
 
-    this.prisma.userRecord.update({
+    await this.prisma.userRecord.update({
       where: {
         userId: command.userId,
       },

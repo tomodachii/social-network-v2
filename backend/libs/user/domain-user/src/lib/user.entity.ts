@@ -74,6 +74,10 @@ export class UserEntity extends AggregateRoot<UserProps> {
     this.props.birthDay = birthDay;
   }
 
+  get avatar(): BioImageEntity | undefined {
+    return this.getPropsCopy().avatar;
+  }
+
   updateAvatar(avatarProps: CreateBioImageProps): void {
     const avatar = BioImageEntity.createAvatar(avatarProps);
     this.props.avatar = avatar;
