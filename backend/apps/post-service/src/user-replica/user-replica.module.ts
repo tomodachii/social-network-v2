@@ -1,10 +1,16 @@
 import { Logger, Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { KafkaUserConsumer } from './interface-adapter';
-import { SaveUserReplicaCommandHandler } from '@lib/post/replica-user';
+import {
+  SaveUserReplicaCommandHandler,
+  UpdateAvatarUserReplicaCommandHandler,
+} from '@lib/post/replica-user';
 import { DataAccessPostModule } from '@lib/post/data-access';
 
-const commandHandler = [SaveUserReplicaCommandHandler];
+const commandHandler = [
+  SaveUserReplicaCommandHandler,
+  UpdateAvatarUserReplicaCommandHandler,
+];
 
 @Module({
   imports: [CqrsModule, DataAccessPostModule],

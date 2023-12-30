@@ -79,7 +79,6 @@ export class CreateUserCommandHandler
       firstName: user.firstName,
       lastName: user.lastName,
       id: user.id,
-      version: 0,
     };
     this.userProducer.publishUserCreatedEvent(userCreatedEvent);
   }

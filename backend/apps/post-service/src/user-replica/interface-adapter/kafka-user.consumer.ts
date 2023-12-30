@@ -1,7 +1,15 @@
-import { SaveUserReplicaCommand } from '@lib/post/replica-user';
-import { UserCreatedEvent, UserPattern } from '@lib/shared/service-interface';
+import {
+  SaveUserReplicaCommand,
+  UpdateAvatarUserReplicaCommand,
+  UserAvatarUpdatedDomainEvent,
+} from '@lib/post/replica-user';
+import {
+  AvatarUpdatedEvent,
+  UserCreatedEvent,
+  UserPattern,
+} from '@lib/shared/service-interface';
 import { Controller, Logger } from '@nestjs/common';
-import { CommandBus } from '@nestjs/cqrs';
+import { CommandBus, EventBus } from '@nestjs/cqrs';
 import { EventPattern } from '@nestjs/microservices';
 import { nanoid } from 'nanoid';
 
@@ -9,6 +17,7 @@ import { nanoid } from 'nanoid';
 export class KafkaUserConsumer {
   constructor(
     private readonly commandBus: CommandBus,
+    private readonly eventBus: EventBus,
     private readonly logger: Logger
   ) {}
 
@@ -19,7 +28,7 @@ export class KafkaUserConsumer {
         userId: data.id,
         firstName: data.firstName,
         lastName: data.lastName,
-        version: data.version,
+        version: 0,
         metadata: {
           correlationId: nanoid(6),
           timestamp: Date.now(),
@@ -30,6 +39,34 @@ export class KafkaUserConsumer {
     this.logger.log(
       `User created event received: ${JSON.stringify(data)}`,
       'post-service'
+    );
+  }
+
+  @EventPattern(UserPattern.AvatarUpdated)
+  async handleAvatarUpdatedEvent(data: AvatarUpdatedEvent) {
+    this.commandBus.execute(
+      new UpdateAvatarUserReplicaCommand({
+        userId: data.userId,
+        avatarFileId: data.avatarFileId,
+        version: data.version,
+        metadata: {
+          correlationId: nanoid(6),
+          timestamp: Date.now(),
+        },
+      })
+    );
+
+    this.logger.log(
+      `Avatar updated event received: ${JSON.stringify(data)}`,
+      'post-service'
+    );
+
+    this.eventBus.publish(
+      new UserAvatarUpdatedDomainEvent({
+        avatarFileId: data.avatarFileId,
+        size: data.size,
+        aggregateId: data.userId,
+      })
     );
   }
 }
