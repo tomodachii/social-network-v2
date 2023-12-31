@@ -6,7 +6,6 @@ import {
 import { Module, Provider, Logger } from '@nestjs/common';
 import { HttpUserController } from './interface-adapter';
 
-import { UserMapper } from './user.mapper';
 import {
   AUTH_SERVICE_PROXY,
   USER_PRODUCER,
@@ -16,6 +15,7 @@ import {
   KafkaConfig,
   KafkaUserProducer,
   MysqlUserRepository,
+  MysqlUserMapper,
 } from './infrastructure';
 import { CqrsModule } from '@nestjs/cqrs';
 import { DataAccessUserModule } from '@lib/user/data-access';
@@ -36,7 +36,7 @@ const commandHandlers: Provider[] = [
 
 const queryHandlers: Provider[] = [FindUserByIdQueryHandler];
 
-const mappers: Provider[] = [UserMapper];
+const mappers: Provider[] = [MysqlUserMapper];
 
 const repositories: Provider[] = [
   { provide: USER_REPOSITORY, useClass: MysqlUserRepository },

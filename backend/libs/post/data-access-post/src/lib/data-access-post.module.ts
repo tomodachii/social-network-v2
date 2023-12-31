@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
-import { PrismaPostService } from './prisma.post.service';
+import { PrismaMysqlPostService } from './mysql/prisma-mysql-post.service';
+import { PrismaMongoPostService } from './mongo/prisma-mongo-post.service';
 
 @Module({
-  providers: [PrismaPostService],
-  exports: [PrismaPostService],
+  providers: [PrismaMongoPostService, PrismaMysqlPostService],
+  exports: [PrismaMongoPostService, PrismaMysqlPostService],
 })
 export class DataAccessPostModule {}
