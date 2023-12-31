@@ -7,10 +7,10 @@ import {
   Gender,
   UserEntity,
 } from '@lib/user/domain';
-import { UserResponseDto } from './interface-adapter';
+import { UserResponseDto } from '../../interface-adapter';
 import { UserPrersistent, UserRecord } from '@lib/user/data-access';
 
-export class UserMapper
+export class MysqlUserMapper
   implements Mapper<UserEntity, UserRecord, UserResponseDto>
 {
   toPersistence(entity: UserEntity): UserPrersistent {

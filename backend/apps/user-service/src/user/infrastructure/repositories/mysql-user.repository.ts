@@ -2,7 +2,7 @@ import { BaseRepository } from '@lib/shared/common/databases';
 import { BioImageType, UserEntity, UserRepository } from '@lib/user/domain';
 import { PrismaUserService, UserRecord } from '@lib/user/data-access';
 import { EventBus } from '@nestjs/cqrs';
-import { UserMapper } from '../../user.mapper';
+import { MysqlUserMapper } from './mysql-user.mapper';
 import { Logger, Injectable } from '@nestjs/common';
 import { None, Option, Some } from 'oxide.ts';
 
@@ -12,7 +12,7 @@ export class MysqlUserRepository
   implements UserRepository
 {
   constructor(
-    protected readonly mapper: UserMapper,
+    protected readonly mapper: MysqlUserMapper,
     protected readonly eventBus: EventBus,
     protected readonly prisma: PrismaUserService,
     protected readonly logger: Logger
