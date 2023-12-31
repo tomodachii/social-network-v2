@@ -1,1 +1,2 @@
-export * from './mysql-post.repository';
+export * from './mysql';
+export * from './mongo';
