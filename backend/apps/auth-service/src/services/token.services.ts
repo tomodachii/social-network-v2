@@ -68,8 +68,8 @@ const validateCredentials = (
 ): Either<Error, string> => {
   // const isValid: boolean = authenticate(email, password)
   // use monad!
-  const hashedPassword = user.password;
-  const salt = user.salt;
+  const hashedPassword = user?.password;
+  const salt = user?.salt;
   const isValid = passwordValidator(password, salt, hashedPassword);
   // const isValid: boolean = email === "email" && password === "password" ? true : false;
   return isValid ? right(encoder(user.id)) : left(new Error('bad credentials'));
