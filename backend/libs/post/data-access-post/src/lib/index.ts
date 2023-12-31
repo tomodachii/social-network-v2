@@ -1,2 +1,3 @@
 export * from './data-access-post.module';
-export * from './prisma.post.service';
+export * from './mongo/prisma-mongo-post.service';
+export * from './mysql/prisma-mysql-post.service';

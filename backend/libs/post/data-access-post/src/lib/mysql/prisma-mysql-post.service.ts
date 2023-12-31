@@ -7,7 +7,12 @@ import {
   ReactRecord,
 } from '@prisma/client/post';
 
-export * from '@prisma/client/post';
+export {
+  PostRecord,
+  AttachmentRecord,
+  CommentRecord,
+  ReactRecord,
+} from '@prisma/client/post';
 
 export type CommentPersistent = CommentRecord & {
   reacts: ReactRecord[];
@@ -22,8 +27,11 @@ export type PostPrersistent = PostRecord & {
 } & { version?: number };
 
 @Injectable()
-export class PrismaPostService extends PrismaClient implements OnModuleInit {
-  private readonly logger = new Logger(PrismaPostService.name);
+export class PrismaMysqlPostService
+  extends PrismaClient
+  implements OnModuleInit
+{
+  private readonly logger = new Logger(PrismaMysqlPostService.name);
   constructor() {
     super({
       log: ['query', 'info', 'warn', 'error'],
