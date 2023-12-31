@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UpdateAvatarUserReplicaCommand } from './update-avatar-user-replica.command';
-import { PrismaPostService } from '@lib/post/data-access';
+import { PrismaMongoPostService } from '@lib/post/data-access';
 import { Err, Ok, Result } from 'oxide.ts';
 import { Exception } from '@lib/shared/common/exceptions';
 import { HttpStatus } from '@lib/shared/common/api';
@@ -9,7 +9,7 @@ import { HttpStatus } from '@lib/shared/common/api';
 export class UpdateAvatarUserReplicaCommandHandler
   implements ICommandHandler<UpdateAvatarUserReplicaCommand>
 {
-  constructor(private readonly prisma: PrismaPostService) {}
+  constructor(private readonly prisma: PrismaMongoPostService) {}
   async execute(
     command: UpdateAvatarUserReplicaCommand
   ): Promise<Result<boolean, Error>> {
@@ -25,7 +25,7 @@ export class UpdateAvatarUserReplicaCommandHandler
     //   );
     // }
 
-    await this.prisma.userRecord.update({
+    await this.prisma.userDocument.update({
       where: {
         userId: command.userId,
       },
