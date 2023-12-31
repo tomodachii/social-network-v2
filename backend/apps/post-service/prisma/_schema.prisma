@@ -1,0 +1,124 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../../../node_modules/@prisma/client/post"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = "mysql://root:123456@localhost:3308/post_db"
+}
+
+model ReactRecord {
+  id        String         @id @default(uuid())
+  type      ReactType
+  userId    String
+  postId    String?
+  commentId String?
+  post      PostRecord?    @relation("ReactPost", fields: [postId], references: [id], map: "ReactPost")
+  comment   CommentRecord? @relation("ReactComment", fields: [commentId], references: [id], onDelete: Cascade)
+  user      UserRecord     @relation(fields: [userId], references: [userId], onDelete: Cascade)
+
+  @@unique([userId, postId, type])
+  @@unique([userId, commentId, type])
+  @@index([postId], map: "ReactPost")
+  @@index([commentId], map: "react_commentId_fkey")
+  @@map("react")
+}
+
+model AttachmentRecord {
+  id          String         @id @default(uuid())
+  createdAt   DateTime       @default(now())
+  name        String
+  description String
+  size        Int
+  type        AttachmentType
+  commentId   String?
+  postId      String?
+  comment     CommentRecord? @relation("AttachmentComment", fields: [commentId], references: [id], onDelete: Cascade, map: "AttachmentComment")
+  post        PostRecord?    @relation("AttachmentPost", fields: [postId], references: [id], onDelete: Cascade)
+
+  @@index([commentId], map: "AttachmentComment")
+  @@index([postId], map: "attachment_postId_fkey")
+  @@map("attachment")
+}
+
+model CommentRecord {
+  id             String             @id @default(uuid())
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+  content        String
+  userId         String
+  replyCommentId String?
+  postId         String?
+  attachments    AttachmentRecord[] @relation("AttachmentComment")
+  replyToComment CommentRecord?     @relation("ReplyComment", fields: [replyCommentId], references: [id], onDelete: Cascade, map: "ReplyComment")
+  replies        CommentRecord[]    @relation("ReplyComment")
+  post           PostRecord?        @relation("CommentPost", fields: [postId], references: [id], onDelete: Cascade)
+  user           UserRecord         @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  reacts         ReactRecord[]      @relation("ReactComment")
+
+  @@index([replyCommentId], map: "ReplyComment")
+  @@index([postId], map: "comment_postId_fkey")
+  @@index([userId], map: "comment_userId_fkey")
+  @@map("comment")
+}
+
+model PostRecord {
+  id             String             @id @default(uuid())
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+  version        Int                @default(0)
+  content        String
+  originalPostId String?
+  mode           PostMode
+  userId         String
+  attachments    AttachmentRecord[] @relation("AttachmentPost")
+  comments       CommentRecord[]    @relation("CommentPost")
+  originalPost   PostRecord?        @relation("SharePost", fields: [originalPostId], references: [id], onDelete: NoAction)
+  sharePost      PostRecord[]       @relation("SharePost")
+  user           UserRecord         @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  reacts         ReactRecord[]      @relation("ReactPost")
+
+  @@index([originalPostId], map: "post_originalPostId_fkey")
+  @@index([userId], map: "post_userId_fkey")
+  @@map("post")
+}
+
+model UserRecord {
+  userId       String          @id @default(uuid())
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  version      Int             @default(0)
+  firstName    String
+  lastName     String
+  avatarFileId String?
+  comments     CommentRecord[]
+  posts        PostRecord[]
+  reacts       ReactRecord[]
+
+  @@map("user")
+}
+
+enum ReactType {
+  Love
+  Like
+  Haha
+  Wow
+  Sad
+  Angry
+  Care
+}
+
+enum AttachmentType {
+  Image
+  Video
+  Document
+}
+
+enum PostMode {
+  Privacy
+  Public
+  OnlyMe
+  Friends
+  FriendsOfFriends
+}
