@@ -1,8 +1,12 @@
 import { Module, Provider, Logger } from '@nestjs/common';
-import { PostMapper } from './post.mapper';
 import { CqrsModule } from '@nestjs/cqrs';
 import { DataAccessPostModule } from '@lib/post/data-access';
-import { MysqlPostRepository } from './infrastructure-adapter';
+import {
+  MysqlPostRepository,
+  MongoPostMapper,
+  MongoPostRepository,
+  MysqlPostMapper,
+} from './infrastructure-adapter';
 import {
   CreatePostCommandHandler,
   DeletePostCommandHandler,
@@ -45,7 +49,7 @@ const commandHandlers: Provider[] = [
 
 const queryHandlers: Provider[] = [ViewPostQueryHandler];
 
-const mappers: Provider[] = [PostMapper];
+const mappers: Provider[] = [MysqlPostMapper];
 
 const repositories: Provider[] = [
   {

@@ -42,20 +42,20 @@ export class CreatePostCommandHandler
       userId: RequestContextService.getUserId(),
     });
 
-    const isExistAttachments =
-      !Guard.isEmpty(command.attachments) &&
-      (await this.repo.checkExistAttachmentsByIds(
-        command.attachments?.map((attachment) => attachment.id)
-      ));
+    // const isExistAttachments =
+    //   !Guard.isEmpty(command.attachments) &&
+    //   (await this.repo.checkExistAttachmentsByIds(
+    //     command.attachments?.map((attachment) => attachment.id)
+    //   ));
 
-    if (isExistAttachments) {
-      return Err(
-        new Exception(
-          'Attachments belong to other post',
-          HttpStatus.BAD_REQUEST
-        )
-      );
-    }
+    // if (isExistAttachments) {
+    //   return Err(
+    //     new Exception(
+    //       'Attachments belong to other post',
+    //       HttpStatus.BAD_REQUEST
+    //     )
+    //   );
+    // }
 
     if (!Guard.isEmpty(command.attachments))
       for (let attachment of command.attachments) {

@@ -17,7 +17,7 @@ import {
   CommentRecord,
 } from '@lib/post/data-access';
 
-export class PostMapper implements Mapper<PostEntity, PostRecord> {
+export class MysqlPostMapper implements Mapper<PostEntity, PostRecord> {
   toResponse(entity: PostEntity) {
     throw new Error('Method not implemented.');
   }
@@ -31,9 +31,9 @@ export class PostMapper implements Mapper<PostEntity, PostRecord> {
         mode: record.mode as PostMode,
         userId: record.userId,
         attachments:
-          record.attachments?.map(PostMapper.initAttachmentEntity) ?? [],
-        comments: record.comments?.map(PostMapper.initCommentEntity) ?? [],
-        reacts: record.reacts?.map(PostMapper.initReactVO) ?? [],
+          record.attachments?.map(MysqlPostMapper.initAttachmentEntity) ?? [],
+        comments: record.comments?.map(MysqlPostMapper.initCommentEntity) ?? [],
+        reacts: record.reacts?.map(MysqlPostMapper.initReactVO) ?? [],
       },
     });
     return result;
@@ -71,9 +71,9 @@ export class PostMapper implements Mapper<PostEntity, PostRecord> {
         content: comment.content,
         userId: comment.userId,
         attachments:
-          comment.attachments?.map(PostMapper.initAttachmentEntity) ?? [],
-        replies: comment.replies?.map(PostMapper.initCommentEntity) ?? [],
-        reacts: comment.reacts?.map(PostMapper.initReactVO) ?? [],
+          comment.attachments?.map(MysqlPostMapper.initAttachmentEntity) ?? [],
+        replies: comment.replies?.map(MysqlPostMapper.initCommentEntity) ?? [],
+        reacts: comment.reacts?.map(MysqlPostMapper.initReactVO) ?? [],
       },
     });
     return result;

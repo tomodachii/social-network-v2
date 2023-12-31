@@ -1,4 +1,4 @@
-import { PrismaPostService } from '@lib/post/data-access';
+import { PrismaMongoPostService } from '@lib/post/data-access';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { SaveUserReplicaCommand } from './save-user-replica.command';
 import { Err, Ok, Result } from 'oxide.ts';
@@ -9,7 +9,7 @@ import { HttpStatus } from '@lib/shared/common/api';
 export class SaveUserReplicaCommandHandler
   implements ICommandHandler<SaveUserReplicaCommand>
 {
-  constructor(private readonly prisma: PrismaPostService) {}
+  constructor(private readonly prisma: PrismaMongoPostService) {}
 
   async execute(
     command: SaveUserReplicaCommand
@@ -26,7 +26,7 @@ export class SaveUserReplicaCommandHandler
     //   );
     // }
 
-    await this.prisma.userRecord.upsert({
+    await this.prisma.userDocument.upsert({
       where: {
         userId: command.userId,
       },

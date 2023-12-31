@@ -18,20 +18,9 @@ export class UpdatePostCommandHandler
   ) {}
 
   async execute(command: UpdatePostCommand): Promise<Result<boolean, Error>> {
-    const postOption = await this.repo.findPostById(command.id);
+    const postOption = await this.repo.findPostById(command.postId);
     if (postOption.isNone()) {
       return Err(new Exception('Cannot find post', HttpStatus.BAD_REQUEST));
-    }
-    const isExistAttachments = await this.repo.checkExistAttachmentsByIds(
-      command.attachments.map((attachment) => attachment.id)
-    );
-    if (isExistAttachments) {
-      return Err(
-        new Exception(
-          'Attachments belong to other post',
-          HttpStatus.BAD_REQUEST
-        )
-      );
     }
 
     const post = postOption.unwrap();

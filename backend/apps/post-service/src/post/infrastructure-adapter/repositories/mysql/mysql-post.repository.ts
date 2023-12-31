@@ -4,14 +4,14 @@ import {
   CommentRecord,
   PostPrersistent,
   PostRecord,
-  PrismaPostService,
+  PrismaMysqlPostService,
   ReactRecord,
 } from '@lib/post/data-access';
 import { BaseRepository } from '@lib/shared/common/databases';
 import { Injectable, Logger } from '@nestjs/common';
 import { PostEntity, CommentEntity, PostRepository } from '@lib/post/domain';
 import { EventBus } from '@nestjs/cqrs';
-import { PostMapper } from '../../post.mapper';
+import { MysqlPostMapper } from './mysql-post.mapper';
 import { Ok, Option, Result } from 'oxide.ts';
 import { v4 } from 'uuid';
 
@@ -21,9 +21,9 @@ export class MysqlPostRepository
   implements PostRepository
 {
   constructor(
-    protected readonly mapper: PostMapper,
+    protected readonly mapper: MysqlPostMapper,
     protected readonly eventBus: EventBus,
-    protected readonly prisma: PrismaPostService,
+    protected readonly prisma: PrismaMysqlPostService,
     protected readonly logger: Logger
   ) {
     super(mapper, eventBus, logger);
@@ -305,18 +305,5 @@ export class MysqlPostRepository
       where: { id: post.id },
     });
     return !!result;
-  }
-  findCommentById(id: string): Promise<CommentEntity> {
-    throw new Error('Method not implemented.');
-  }
-  async checkExistAttachmentsByIds(ids: string[]): Promise<boolean> {
-    const result = await this.prisma.attachmentRecord.findMany({
-      where: {
-        id: {
-          in: ids,
-        },
-      },
-    });
-    return result.length > 0;
   }
 }
