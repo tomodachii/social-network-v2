@@ -306,17 +306,4 @@ export class MysqlPostRepository
     });
     return !!result;
   }
-  findCommentById(id: string): Promise<CommentEntity> {
-    throw new Error('Method not implemented.');
-  }
-  async checkExistAttachmentsByIds(ids: string[]): Promise<boolean> {
-    const result = await this.prisma.attachmentRecord.findMany({
-      where: {
-        id: {
-          in: ids,
-        },
-      },
-    });
-    return result.length > 0;
-  }
 }

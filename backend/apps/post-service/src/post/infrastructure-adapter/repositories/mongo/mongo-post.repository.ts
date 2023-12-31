@@ -114,16 +114,11 @@ export class MongoPostRepository
     });
     return !!result;
   }
+
   async deletePost(post: PostEntity): Promise<boolean> {
     const result = await this.prisma.postDocument.delete({
       where: { postId: post.id },
     });
     return !!result;
-  }
-  findCommentById(id: string): Promise<CommentEntity> {
-    throw new Error('Method not implemented.');
-  }
-  checkExistAttachmentsByIds(ids: string[]): Promise<boolean> {
-    throw new Error('Method not implemented.');
   }
 }
