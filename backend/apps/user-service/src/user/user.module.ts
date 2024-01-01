@@ -16,7 +16,7 @@ import {
   KafkaUserProducer,
   MysqlUserRepository,
   MysqlUserMapper,
-} from './infrastructure';
+} from './infrastructure-adapter';
 import { CqrsModule } from '@nestjs/cqrs';
 import { DataAccessUserModule } from '@lib/user/data-access';
 import { ClientsModule } from '@nestjs/microservices';
