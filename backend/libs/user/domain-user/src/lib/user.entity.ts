@@ -8,6 +8,7 @@ import { ConfigEntity, BioImageEntity, CreateBioImageProps } from './entities';
 import { HttpStatus } from '@lib/shared/common/api';
 
 export interface UserProps {
+  version: number;
   firstName: string;
   lastName: string;
   fullName?: string;
@@ -32,6 +33,7 @@ export class UserEntity extends AggregateRoot<UserProps> {
     const id = v4();
     const props: UserProps = {
       ...create,
+      version: 0,
     };
     return new UserEntity({ id, props });
   }
@@ -40,13 +42,13 @@ export class UserEntity extends AggregateRoot<UserProps> {
     return this.props.firstName;
   }
 
-  get lastName(): string {
-    return this.props.lastName;
-  }
-
   set firstName(firstName: string) {
     this.validate();
     this.props.firstName = firstName;
+  }
+
+  get lastName(): string {
+    return this.props.lastName;
   }
 
   set lastName(lastName: string) {
@@ -76,6 +78,10 @@ export class UserEntity extends AggregateRoot<UserProps> {
 
   get avatar(): BioImageEntity | undefined {
     return this.getPropsCopy().avatar;
+  }
+
+  get cover(): BioImageEntity | undefined {
+    return this.getPropsCopy().cover;
   }
 
   updateAvatar(avatarProps: CreateBioImageProps): void {
