@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Param, Post, Put } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
 import { Result, match } from 'oxide.ts';
 import { BaseResponse } from '@lib/shared/common/api';
-import { CreateCommentDto, DeleteCommentDto, UpdateCommentDto } from './dtos';
+import { CreateCommentDto, DeleteCommentDto, UpdateCommentDto } from '../dtos';
 import {
   CreateCommentCommand,
   DeleteCommentCommand,

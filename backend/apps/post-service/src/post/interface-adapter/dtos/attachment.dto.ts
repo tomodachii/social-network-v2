@@ -6,7 +6,7 @@ export class AttachmentDto {
   id: string;
 
   @IsString()
-  name: string;
+  extension: string;
 
   @IsNumber()
   size: number;

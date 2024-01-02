@@ -2,7 +2,7 @@ import { Body, Controller, Param, Post } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
 import { Result, match } from 'oxide.ts';
 import { BaseResponse } from '@lib/shared/common/api';
-import { ReactCommentDto, ReactPostDto } from './dtos';
+import { ReactCommentDto, ReactPostDto } from '../dtos';
 import { ReactCommentCommand, ReactPostCommand } from '@lib/post/feature';
 
 @Controller('posts/:postId/reacts')

@@ -10,7 +10,7 @@ import {
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { Result, match } from 'oxide.ts';
 import { BaseResponse } from '@lib/shared/common/api';
-import { CreatePostDto, UpdatePostDto } from './dtos';
+import { CreatePostDto, UpdatePostDto } from '../dtos';
 import {
   CreatePostCommand,
   DeletePostCommand,
