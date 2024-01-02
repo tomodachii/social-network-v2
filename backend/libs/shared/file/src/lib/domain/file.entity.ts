@@ -60,7 +60,7 @@ export const getFileNameString = (file: File): string => {
   return `${file.name}.${file.ext}`
 }
 
-export const getFilePathString = (file: File): string => {
+export const getFileURLString = (file: File): string => {
   return `${getFilePrefixString(file.prefix)}/${getFileNameString(file)}`
 }
 
