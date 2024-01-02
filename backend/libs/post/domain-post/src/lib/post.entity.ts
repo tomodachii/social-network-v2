@@ -13,6 +13,7 @@ import {
 import { PostMode } from './post.type';
 
 export interface PostProps {
+  version: number;
   content: string;
   reacts: ReactVO[];
   comments: CommentEntity[];
@@ -25,7 +26,7 @@ export interface PostProps {
 export interface CreatePostProps {
   content: string;
   userId: AggregateID;
-  attachments: AttachmentEntity[];
+  attachments: CreateAttachmentProps[];
   mode: PostMode;
   originalPost?: PostEntity;
 }
@@ -35,6 +36,8 @@ export class PostEntity extends AggregateRoot<PostProps> {
     const id = v4();
     const props: PostProps = {
       ...create,
+      attachments: create.attachments.map((a) => AttachmentEntity.create(a)),
+      version: 0,
       reacts: [],
       comments: [],
     };
@@ -43,6 +46,10 @@ export class PostEntity extends AggregateRoot<PostProps> {
 
   get content(): string {
     return this.props.content;
+  }
+
+  set content(content: string) {
+    this.props.content = content;
   }
 
   get reacts(): ReactVO[] {
@@ -64,11 +71,6 @@ export class PostEntity extends AggregateRoot<PostProps> {
   get mode(): PostMode {
     return this.props.mode;
   }
-
-  set content(content: string) {
-    this.props.content = content;
-  }
-
   set mode(mode: PostMode) {
     this.props.mode = mode;
   }
@@ -81,7 +83,7 @@ export class PostEntity extends AggregateRoot<PostProps> {
 
   updateComment(
     commentId: AggregateID,
-    updateCommentProp: Partial<CreateCommentProps>
+    updateCommentProp: CreateCommentProps
   ): void {
     const comment = this.props.comments.find((c) => c.id === commentId);
     if (!comment) {
@@ -94,7 +96,7 @@ export class PostEntity extends AggregateRoot<PostProps> {
     for (const attachment of comment.attachments) {
       comment.removeAttachment(attachment.id);
     }
-    for (const attachment of updateCommentProp.attachments!) {
+    for (const attachment of updateCommentProp.attachments) {
       comment.addAttachment(attachment);
     }
   }
@@ -161,7 +163,7 @@ export class PostEntity extends AggregateRoot<PostProps> {
   updateReplyToComment(
     commentId: AggregateID,
     replyId: AggregateID,
-    updateReplyProp: Partial<CreateCommentProps>
+    updateReplyProp: CreateCommentProps
   ): void {
     const comment = this.getComment(commentId);
     if (!comment) {

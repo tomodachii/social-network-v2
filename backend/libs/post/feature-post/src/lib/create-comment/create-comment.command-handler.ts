@@ -6,11 +6,7 @@ import { RequestContextService } from '@lib/shared/common/application';
 import { Err, Ok, Result } from 'oxide.ts';
 import { CreateCommentCommand } from './create-comment.command';
 import { POST_REPOSITORY } from '../post.di-token';
-import {
-  AttachmentEntity,
-  CreateAttachmentProps,
-  PostRepository,
-} from '@lib/post/domain';
+import { CreateAttachmentProps, PostRepository } from '@lib/post/domain';
 
 @CommandHandler(CreateCommentCommand)
 export class CreateCommentCommandHandler {
@@ -31,7 +27,7 @@ export class CreateCommentCommandHandler {
           id: attachment.id,
           type: attachment.type,
           description: attachment.description,
-          name: attachment.name,
+          extension: attachment.extension,
           size: attachment.size,
         };
         return createAttachmentProps;

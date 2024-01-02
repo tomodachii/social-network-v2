@@ -9,3 +9,4 @@ export * from './lib/update-comment';
 export * from './lib/delete-comment';
 export * from './lib/react-post';
 export * from './lib/react-comment';
+export * from './lib/create-post-when-user-updated-avatar';

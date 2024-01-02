@@ -34,16 +34,16 @@ export class UpdatePostCommandHandler
       );
     }
 
-    for (let attachment of post.attachments) {
+    for (const attachment of post.attachments) {
       post.removeAttachment(attachment.id);
     }
     const attachments = command.attachments;
-    for (let attachment of attachments) {
+    for (const attachment of attachments) {
       post.addAttachment({
         description: attachment.description,
         type: attachment.type,
         id: attachment.id,
-        name: attachment.name,
+        extension: attachment.extension,
         size: attachment.size,
       });
     }

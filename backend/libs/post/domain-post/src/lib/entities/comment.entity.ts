@@ -5,6 +5,7 @@ import { v4 } from 'uuid';
 import { HttpStatus } from '@lib/shared/common/api';
 import { ReactVO } from '../value-objects/react.vo';
 import { AttachmentEntity, CreateAttachmentProps } from './attachment.entity';
+import { Nullable } from '@lib/shared/common/types';
 
 export interface CommentProps {
   content: string;
@@ -38,6 +39,10 @@ export class CommentEntity extends Entity<CommentProps, AggregateID> {
     return this.props.content;
   }
 
+  set content(content: string) {
+    this.props.content = content;
+  }
+
   get reacts(): ReactVO[] {
     return this.props.reacts;
   }
@@ -52,10 +57,6 @@ export class CommentEntity extends Entity<CommentProps, AggregateID> {
 
   get replies(): CommentEntity[] {
     return this.props.replies;
-  }
-
-  set content(content: string) {
-    this.props.content = content;
   }
 
   addReact(react: ReactVO): void {
@@ -88,7 +89,7 @@ export class CommentEntity extends Entity<CommentProps, AggregateID> {
 
   updateReply(
     replyId: AggregateID,
-    updateReplyProps: Partial<CreateCommentProps>
+    updateReplyProps: CreateCommentProps
   ): void {
     const reply = this.getReply(replyId);
     if (!reply) {
@@ -97,7 +98,7 @@ export class CommentEntity extends Entity<CommentProps, AggregateID> {
         HttpStatus.BAD_REQUEST
       );
     }
-    reply.content = updateReplyProps.content!;
+    reply.content = updateReplyProps.content;
   }
 
   removeReply(replyId: AggregateID): void {
@@ -111,14 +112,14 @@ export class CommentEntity extends Entity<CommentProps, AggregateID> {
     this.props.replies.splice(replyIndex, 1);
   }
 
-  getReply(replyId: AggregateID): CommentEntity {
-    return this.props.replies.find((r) => r.id === replyId)!;
+  getReply(replyId: AggregateID): Nullable<CommentEntity> {
+    return this.props.replies.find((r) => r.id === replyId);
   }
 
   addAttachment(createAttachment: CreateAttachmentProps): void {
     const attachment = AttachmentEntity.create({
       description: createAttachment.description,
-      name: createAttachment.name,
+      extension: createAttachment.extension,
       size: createAttachment.size,
       type: createAttachment.type,
       id: createAttachment.id,
