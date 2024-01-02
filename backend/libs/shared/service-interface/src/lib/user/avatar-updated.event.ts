@@ -3,5 +3,6 @@ export interface AvatarUpdatedEvent {
   userId: AggregateID;
   avatarFileId: AggregateID;
   size: number;
+  extension: string;
   version: number;
 }
