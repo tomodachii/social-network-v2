@@ -18,9 +18,6 @@ import {
 } from '@lib/post/data-access';
 
 export class MysqlPostMapper implements Mapper<PostEntity, PostRecord> {
-  toResponse(entity: PostEntity) {
-    throw new Error('Method not implemented.');
-  }
   toDomain(record: PostPrersistent): PostEntity {
     const result = new PostEntity({
       id: record.id,
@@ -28,6 +25,7 @@ export class MysqlPostMapper implements Mapper<PostEntity, PostRecord> {
       updatedAt: record.updatedAt,
       props: {
         content: record.content,
+        version: record.version,
         mode: record.mode as PostMode,
         userId: record.userId,
         attachments:
@@ -55,7 +53,7 @@ export class MysqlPostMapper implements Mapper<PostEntity, PostRecord> {
       updatedAt: attachment.createdAt,
       props: {
         type: attachment.type as AttachmentType,
-        name: attachment.name,
+        extension: attachment.extension,
         description: attachment.description,
         size: attachment.size,
       },
@@ -111,7 +109,7 @@ export class MysqlPostMapper implements Mapper<PostEntity, PostRecord> {
     return {
       id: attachmentCopy.id,
       createdAt: attachmentCopy.createdAt,
-      name: attachmentCopy.name,
+      extension: attachmentCopy.extension,
       description: attachmentCopy.description,
       size: attachmentCopy.size,
       type: attachmentCopy.type,

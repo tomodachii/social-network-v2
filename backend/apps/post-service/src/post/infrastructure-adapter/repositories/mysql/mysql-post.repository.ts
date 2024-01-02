@@ -1,18 +1,17 @@
 import {
   AttachmentRecord,
   CommentPersistent,
-  CommentRecord,
   PostPrersistent,
   PostRecord,
   PrismaMysqlPostService,
   ReactRecord,
 } from '@lib/post/data-access';
-import { BaseRepository } from '@lib/shared/common/databases';
+import { BaseRepository } from '@lib/shared/ddd-v2';
 import { Injectable, Logger } from '@nestjs/common';
-import { PostEntity, CommentEntity, PostRepository } from '@lib/post/domain';
+import { PostEntity, PostRepository } from '@lib/post/domain';
 import { EventBus } from '@nestjs/cqrs';
 import { MysqlPostMapper } from './mysql-post.mapper';
-import { Ok, Option, Result } from 'oxide.ts';
+import { Option } from 'oxide.ts';
 import { v4 } from 'uuid';
 
 @Injectable()
@@ -66,7 +65,7 @@ export class MysqlPostRepository
               ...attachments.map((attachment) => ({
                 id: attachment.id,
                 description: attachment.description,
-                name: attachment.name,
+                extension: attachment.extension,
                 size: attachment.size,
                 type: attachment.type,
               })),
@@ -99,13 +98,13 @@ export class MysqlPostRepository
             create: {
               id: attachment.id,
               description: attachment.description,
-              name: attachment.name,
+              extension: attachment.extension,
               size: attachment.size,
               type: attachment.type,
             },
             update: {
               description: attachment.description,
-              name: attachment.name,
+              extension: attachment.extension,
               size: attachment.size,
               type: attachment.type,
             },
@@ -126,7 +125,7 @@ export class MysqlPostRepository
               attachments: {
                 create: comment.attachments.map((attachment) => ({
                   description: attachment.description,
-                  name: attachment.name,
+                  extension: attachment.extension,
                   size: attachment.size,
                   type: attachment.type,
                 })),
@@ -140,13 +139,13 @@ export class MysqlPostRepository
                   create: {
                     id: attachment.id,
                     description: attachment.description,
-                    name: attachment.name,
+                    extension: attachment.extension,
                     size: attachment.size,
                     type: attachment.type,
                   },
                   update: {
                     description: attachment.description,
-                    name: attachment.name,
+                    extension: attachment.extension,
                     size: attachment.size,
                     type: attachment.type,
                   },
@@ -169,7 +168,7 @@ export class MysqlPostRepository
                     attachments: {
                       create: reply.attachments.map((attachment) => ({
                         description: attachment.description,
-                        name: attachment.name,
+                        extension: attachment.extension,
                         size: attachment.size,
                         type: attachment.type,
                       })),
@@ -183,13 +182,13 @@ export class MysqlPostRepository
                         create: {
                           id: attachment.id,
                           description: attachment.description,
-                          name: attachment.name,
+                          extension: attachment.extension,
                           size: attachment.size,
                           type: attachment.type,
                         },
                         update: {
                           description: attachment.description,
-                          name: attachment.name,
+                          extension: attachment.extension,
                           size: attachment.size,
                           type: attachment.type,
                         },
@@ -300,6 +299,7 @@ export class MysqlPostRepository
     });
     return !!result;
   }
+
   async deletePost(post: PostEntity): Promise<boolean> {
     const result = await this.prisma.postRecord.delete({
       where: { id: post.id },
