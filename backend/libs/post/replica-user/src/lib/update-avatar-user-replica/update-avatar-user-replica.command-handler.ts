@@ -1,18 +1,23 @@
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
 import { UpdateAvatarUserReplicaCommand } from './update-avatar-user-replica.command';
-import { PrismaMongoPostService } from '@lib/post/data-access';
-import { Err, Ok, Result } from 'oxide.ts';
-import { Exception } from '@lib/shared/common/exceptions';
-import { HttpStatus } from '@lib/shared/common/api';
+import { Option, Some } from 'oxide.ts';
+import { UserReplicaRepository } from '../domain';
+import { Inject } from '@nestjs/common';
+import { USER_REPLICA_REPOSIROTY } from '../user-replica.di-token';
+import { UserBioImageUpdateDomainEvent } from '../events';
 
 @CommandHandler(UpdateAvatarUserReplicaCommand)
 export class UpdateAvatarUserReplicaCommandHandler
   implements ICommandHandler<UpdateAvatarUserReplicaCommand>
 {
-  constructor(private readonly prisma: PrismaMongoPostService) {}
+  constructor(
+    @Inject(USER_REPLICA_REPOSIROTY)
+    private readonly repo: UserReplicaRepository,
+    private readonly eventBus: EventBus
+  ) {}
   async execute(
     command: UpdateAvatarUserReplicaCommand
-  ): Promise<Result<boolean, Error>> {
+  ): Promise<Option<boolean>> {
     // const user = await this.prisma.userRecord.findUnique({
     //   where: {
     //     userId: command.userId,
@@ -25,18 +30,25 @@ export class UpdateAvatarUserReplicaCommandHandler
     //   );
     // }
 
-    await this.prisma.userDocument.update({
-      where: {
-        userId: command.userId,
-      },
-      data: {
-        avatarFileId: command.avatarFileId,
-        version: {
-          increment: 1,
-        },
-      },
+    await this.repo.updateAvatar({
+      userId: command.userId,
+      avatarFileId: command.avatarFileId,
+      version: command.version + 1,
     });
 
-    return Ok(true);
+    this.eventBus.publish(
+      new UserBioImageUpdateDomainEvent({
+        fileId: command.avatarFileId,
+        size: command.size,
+        aggregateId: command.userId,
+        extension: command.extension,
+        metadata: {
+          correlationId: command.metadata.correlationId,
+          timestamp: command.metadata.timestamp,
+        },
+      })
+    );
+
+    return Some(true);
   }
 }
