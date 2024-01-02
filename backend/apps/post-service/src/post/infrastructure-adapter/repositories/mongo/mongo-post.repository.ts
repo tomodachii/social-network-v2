@@ -1,11 +1,11 @@
-import { CommentEntity, PostEntity, PostRepository } from '@lib/post/domain';
-import { BaseRepository } from '@lib/shared/common/databases';
+import { PostEntity, PostRepository } from '@lib/post/domain';
 import { PostDocument } from '@prisma/client/post-mongodb';
 import { MongoPostMapper } from './mongo-post.mapper';
 import { EventBus } from '@nestjs/cqrs';
 import { Injectable, Logger } from '@nestjs/common';
 import { Option } from 'oxide.ts';
 import { PrismaMongoPostService } from '@lib/post/data-access';
+import { BaseRepository } from '@lib/shared/ddd-v2';
 
 @Injectable()
 export class MongoPostRepository
@@ -38,7 +38,7 @@ export class MongoPostRepository
         attachments: postDocument.attachments.map((attachment) => ({
           id: attachment.id,
           description: attachment.description,
-          name: attachment.name,
+          extension: attachment.extension,
           size: attachment.size,
           type: attachment.type,
           createdAt: attachment.createdAt,
@@ -64,7 +64,7 @@ export class MongoPostRepository
         attachments: postDocument.attachments.map((attachment) => ({
           id: attachment.id,
           description: attachment.description,
-          name: attachment.name,
+          extension: attachment.extension,
           size: attachment.size,
           type: attachment.type,
           createdAt: attachment.createdAt,
@@ -76,7 +76,7 @@ export class MongoPostRepository
           attachments: comment.attachments.map((attachment) => ({
             id: attachment.id,
             description: attachment.description,
-            name: attachment.name,
+            extension: attachment.extension,
             size: attachment.size,
             type: attachment.type,
             createdAt: attachment.createdAt,
@@ -88,7 +88,7 @@ export class MongoPostRepository
             attachments: reply.attachments.map((attachment) => ({
               id: attachment.id,
               description: attachment.description,
-              name: attachment.name,
+              extension: attachment.extension,
               size: attachment.size,
               type: attachment.type,
               createdAt: attachment.createdAt,

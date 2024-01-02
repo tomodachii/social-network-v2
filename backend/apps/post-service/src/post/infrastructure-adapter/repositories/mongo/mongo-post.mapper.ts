@@ -1,4 +1,4 @@
-import { AggregateID, Mapper } from '@lib/shared/ddd-v2';
+import { Mapper } from '@lib/shared/ddd-v2';
 import {
   AttachmentEntity,
   AttachmentType,
@@ -18,15 +18,13 @@ import {
 } from '@lib/post/data-access';
 
 export class MongoPostMapper implements Mapper<PostEntity, PostDocument> {
-  toResponse(entity: PostEntity) {
-    throw new Error('Method not implemented.');
-  }
   toDomain(record: PostDocument): PostEntity {
     const result = new PostEntity({
       id: record.postId,
       createdAt: record.createdAt,
       updatedAt: record.updatedAt,
       props: {
+        version: record.version,
         content: record.content,
         mode: record.mode as PostMode,
         userId: record.userId,
@@ -55,7 +53,7 @@ export class MongoPostMapper implements Mapper<PostEntity, PostDocument> {
       updatedAt: attachment.createdAt,
       props: {
         type: attachment.type as AttachmentType,
-        name: attachment.name,
+        extension: attachment.extension,
         description: attachment.description,
         size: attachment.size,
       },
@@ -106,7 +104,7 @@ export class MongoPostMapper implements Mapper<PostEntity, PostDocument> {
     return {
       id: attachmentCopy.id,
       createdAt: attachmentCopy.createdAt,
-      name: attachmentCopy.name,
+      extension: attachmentCopy.extension,
       description: attachmentCopy.description,
       size: attachmentCopy.size,
       type: attachmentCopy.type,

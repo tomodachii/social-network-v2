@@ -1,19 +1,20 @@
-import { PrismaMongoPostService } from '@lib/post/data-access';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { SaveUserReplicaCommand } from './save-user-replica.command';
-import { Err, Ok, Result } from 'oxide.ts';
-import { Exception } from '@lib/shared/common/exceptions';
-import { HttpStatus } from '@lib/shared/common/api';
+import { Option, Some } from 'oxide.ts';
+import { UserReplicaRepository } from '../domain';
+import { Inject } from '@nestjs/common';
+import { USER_REPLICA_REPOSIROTY } from '../user-replica.di-token';
 
 @CommandHandler(SaveUserReplicaCommand)
 export class SaveUserReplicaCommandHandler
   implements ICommandHandler<SaveUserReplicaCommand>
 {
-  constructor(private readonly prisma: PrismaMongoPostService) {}
+  constructor(
+    @Inject(USER_REPLICA_REPOSIROTY)
+    private readonly repo: UserReplicaRepository
+  ) {}
 
-  async execute(
-    command: SaveUserReplicaCommand
-  ): Promise<Result<boolean, Error>> {
+  async execute(command: SaveUserReplicaCommand): Promise<Option<boolean>> {
     // const user = await this.prisma.userRecord.findUnique({
     //   where: {
     //     userId: command.userId,
@@ -26,26 +27,14 @@ export class SaveUserReplicaCommandHandler
     //   );
     // }
 
-    await this.prisma.userDocument.upsert({
-      where: {
-        userId: command.userId,
-      },
-      create: {
-        userId: command.userId,
-        firstName: command.firstName,
-        lastName: command.lastName,
-        avatarFileId: null,
-      },
-      update: {
-        firstName: command.firstName,
-        lastName: command.lastName,
-        avatarFileId: null,
-        version: {
-          increment: 1,
-        },
-      },
+    await this.repo.saveReplica({
+      userId: command.userId,
+      firstName: command.firstName,
+      lastName: command.lastName,
+      avatarFileId: null,
+      version: command.version + 1,
     });
 
-    return Ok(true);
+    return Some(true);
   }
 }

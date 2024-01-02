@@ -1,1 +1,1 @@
-export * from './user-avatar-updated.domain-event';
+export * from './user-bio-image-updated.domain-event';

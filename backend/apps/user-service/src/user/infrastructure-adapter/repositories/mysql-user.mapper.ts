@@ -7,12 +7,9 @@ import {
   Gender,
   UserEntity,
 } from '@lib/user/domain';
-import { UserResponseDto } from '../../interface-adapter';
 import { UserPrersistent, UserRecord } from '@lib/user/data-access';
 
-export class MysqlUserMapper
-  implements Mapper<UserEntity, UserRecord, UserResponseDto>
-{
+export class MysqlUserMapper implements Mapper<UserEntity, UserRecord> {
   toPersistence(entity: UserEntity): UserPrersistent {
     const copy = entity.getPropsCopy();
     const record: UserPrersistent = {
@@ -45,6 +42,7 @@ export class MysqlUserMapper
         lastName: record.lastName,
         gender: record.gender as Gender,
         bio: record.bio,
+        version: record.version,
         birthDay: new Date(record.birthDay),
         address:
           record.postalCode &&
@@ -82,8 +80,5 @@ export class MysqlUserMapper
       },
     });
     return entity;
-  }
-  toResponse(entity: UserEntity): UserResponseDto {
-    throw new Error('Method not implemented.');
   }
 }

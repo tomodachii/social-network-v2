@@ -1,10 +1,11 @@
 import {
   SaveUserReplicaCommand,
   UpdateAvatarUserReplicaCommand,
-  UserAvatarUpdatedDomainEvent,
+  UpdateCoverUserReplicaCommand,
 } from '@lib/post/replica-user';
 import {
   AvatarUpdatedEvent,
+  CoverUpdatedEvent,
   UserCreatedEvent,
   UserPattern,
 } from '@lib/shared/service-interface';
@@ -49,6 +50,8 @@ export class KafkaUserConsumer {
         userId: data.userId,
         avatarFileId: data.avatarFileId,
         version: data.version,
+        size: data.size,
+        extension: data.extension,
         metadata: {
           correlationId: nanoid(6),
           timestamp: Date.now(),
@@ -60,13 +63,27 @@ export class KafkaUserConsumer {
       `Avatar updated event received: ${JSON.stringify(data)}`,
       'post-service'
     );
+  }
 
-    this.eventBus.publish(
-      new UserAvatarUpdatedDomainEvent({
-        avatarFileId: data.avatarFileId,
+  @EventPattern(UserPattern.CoverUpdated)
+  async handleCoverUpdatedEvent(data: CoverUpdatedEvent) {
+    this.commandBus.execute(
+      new UpdateCoverUserReplicaCommand({
+        userId: data.userId,
+        coverFileId: data.coverFileId,
+        version: data.version,
         size: data.size,
-        aggregateId: data.userId,
+        extension: data.extension,
+        metadata: {
+          correlationId: nanoid(6),
+          timestamp: Date.now(),
+        },
       })
+    );
+
+    this.logger.log(
+      `Cover updated event received: ${JSON.stringify(data)}`,
+      'post-service'
     );
   }
 }

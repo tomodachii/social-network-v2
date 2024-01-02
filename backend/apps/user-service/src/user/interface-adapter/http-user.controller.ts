@@ -76,7 +76,7 @@ export class HttpUserController {
     return new BaseResponse<boolean>(result);
   }
 
-  @Put('/cover')
+  @Put('cover')
   async updateCover(
     @Body() body: UpdateBioImageDto
   ): Promise<BaseResponse<boolean>> {

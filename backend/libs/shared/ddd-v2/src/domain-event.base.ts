@@ -52,5 +52,6 @@ export abstract class DomainEvent {
       timestamp: props?.metadata?.timestamp || Date.now(),
       userId: props?.metadata?.userId,
     };
+    console.log(this.metadata);
   }
 }

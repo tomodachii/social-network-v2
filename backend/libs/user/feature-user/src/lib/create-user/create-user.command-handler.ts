@@ -1,4 +1,3 @@
-import { UserCreatedEvent } from '@lib/shared/service-interface';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { CreateUserCommand } from './create-user.command';
 import {
@@ -75,11 +74,6 @@ export class CreateUserCommandHandler
   }
 
   private publishEvent(user: UserEntity) {
-    const userCreatedEvent: UserCreatedEvent = {
-      firstName: user.firstName,
-      lastName: user.lastName,
-      id: user.id,
-    };
-    this.userProducer.publishUserCreatedEvent(userCreatedEvent);
+    this.userProducer.publishUserCreatedEvent(user);
   }
 }

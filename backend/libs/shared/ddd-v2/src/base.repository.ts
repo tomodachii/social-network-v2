@@ -1,10 +1,10 @@
-import { AggregateRoot, Mapper } from '@lib/shared/ddd-v2';
 import { LoggerPort } from '@lib/shared/common/ports';
 import { ObjectLiteral } from '@lib/shared/common/types';
 import { EventBus } from '@nestjs/cqrs';
+import { AggregateRoot, AggregateRootProps, Mapper } from '.';
 
 export abstract class BaseRepository<
-  Aggregate extends AggregateRoot<any>,
+  Aggregate extends AggregateRoot<AggregateRootProps>,
   DbRecord extends ObjectLiteral
 > {
   protected constructor(

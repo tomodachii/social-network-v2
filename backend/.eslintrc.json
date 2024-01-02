@@ -15,10 +15,6 @@
               {
                 "sourceTag": "*",
                 "onlyDependOnLibsWithTags": ["*"]
-              },
-              {
-                "sourceTag": "scope:post-service",
-                "onlyDependOnLibsWithTags": ["scope:shared"]
               }
             ]
           }

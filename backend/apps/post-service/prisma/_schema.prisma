@@ -28,7 +28,7 @@ model ReactRecord {
 model AttachmentRecord {
   id          String         @id @default(uuid())
   createdAt   DateTime       @default(now())
-  name        String
+  extension   String
   description String
   size        Int
   type        AttachmentType

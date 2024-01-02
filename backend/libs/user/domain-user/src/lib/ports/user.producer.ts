@@ -1,9 +1,7 @@
-import {
-  AvatarUpdatedEvent,
-  UserCreatedEvent,
-} from '@lib/shared/service-interface';
+import { UserEntity } from '../user.entity';
 
 export interface UserProducer {
-  publishUserCreatedEvent(user: UserCreatedEvent): void;
-  publishAvatarUpdatedEvent(avatar: AvatarUpdatedEvent): void;
+  publishUserCreatedEvent(user: UserEntity): void;
+  publishAvatarUpdatedEvent(user: UserEntity): void;
+  publishCoverUpdatedEvent(user: UserEntity): void;
 }

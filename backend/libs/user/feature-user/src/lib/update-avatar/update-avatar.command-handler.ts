@@ -7,7 +7,6 @@ import {
   UserProducer,
   UserRepository,
 } from '@lib/user/domain';
-import { AvatarUpdatedEvent } from '@lib/shared/service-interface';
 import { RequestContextService } from '@lib/shared/common/application';
 
 @CommandHandler(UpdateAvatarCommand)
@@ -35,16 +34,9 @@ export class UpdateAvatarCommandHandler implements ICommandHandler {
       size: command.size,
     });
 
-    const result = await this.userRepo.updateAvatar(user);
+    const result = await this.userRepo.saveUser(user);
 
-    const avatar = user.avatar!;
-    const updatedAvatarEvent: AvatarUpdatedEvent = {
-      userId: user.id,
-      avatarFileId: avatar.id,
-      size: avatar.getPropsCopy().size,
-      version: 0,
-    };
-    this.userProducer.publishAvatarUpdatedEvent(updatedAvatarEvent);
-    return result;
+    this.userProducer.publishAvatarUpdatedEvent(user);
+    return !!result;
   }
 }

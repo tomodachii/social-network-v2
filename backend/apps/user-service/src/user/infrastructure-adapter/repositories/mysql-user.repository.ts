@@ -1,4 +1,4 @@
-import { BaseRepository } from '@lib/shared/common/databases';
+import { BaseRepository } from '@lib/shared/ddd-v2';
 import { BioImageType, UserEntity, UserRepository } from '@lib/user/domain';
 import { PrismaUserService, UserRecord } from '@lib/user/data-access';
 import { EventBus } from '@nestjs/cqrs';
@@ -8,7 +8,7 @@ import { None, Option, Some } from 'oxide.ts';
 
 @Injectable()
 export class MysqlUserRepository
-  extends BaseRepository<any, UserRecord>
+  extends BaseRepository<UserEntity, UserRecord>
   implements UserRepository
 {
   constructor(
@@ -45,56 +45,7 @@ export class MysqlUserRepository
     return record ? Some(this.mapper.toDomain(record)) : None;
   }
 
-  async updateAvatar(user: UserEntity): Promise<boolean> {
-    const userRecord = this.mapper.toPersistence(user);
-    const avatarRecord = userRecord.avatar;
-    const [deleteAvatar, createAvatar] = await this.prisma.$transaction([
-      this.deleteBioImage(user, BioImageType.AVATAR),
-      this.prisma.bioImageRecord.create({
-        data: {
-          extension: avatarRecord.extension,
-          size: avatarRecord.size,
-          type: avatarRecord.type,
-          id: avatarRecord.id,
-          createdAt: avatarRecord.createdAt,
-          updatedAt: avatarRecord.updatedAt,
-          avatarUser: {
-            connect: {
-              id: userRecord.id,
-            },
-          },
-        },
-      }),
-    ]);
-    return createAvatar !== null;
-  }
-
-  async updateCover(user: UserEntity): Promise<boolean> {
-    const userRecord = this.mapper.toPersistence(user);
-    const coverRecord = userRecord.cover;
-    const [deleteCover, createCover] = await this.prisma.$transaction([
-      this.deleteBioImage(user, BioImageType.COVER),
-      this.prisma.bioImageRecord.create({
-        data: {
-          extension: coverRecord.extension,
-          size: coverRecord.size,
-          type: coverRecord.type,
-          id: coverRecord.id,
-          createdAt: coverRecord.createdAt,
-          updatedAt: coverRecord.updatedAt,
-          coverUser: {
-            connect: {
-              id: userRecord.id,
-            },
-          },
-        },
-      }),
-    ]);
-    return createCover !== null;
-  }
-
-  deleteBioImage(user: UserEntity, type: BioImageType) {
-    const userRecord = this.mapper.toPersistence(user);
+  deleteBioImage(userRecord: UserRecord) {
     return this.prisma.bioImageRecord.deleteMany({
       where: {
         OR: [
@@ -102,14 +53,29 @@ export class MysqlUserRepository
             avatarUser: {
               id: userRecord.id,
             },
+            AND: {
+              type: BioImageType.AVATAR,
+              AND: {
+                id: {
+                  not: userRecord.avatarId,
+                },
+              },
+            },
           },
           {
             coverUser: {
               id: userRecord.id,
             },
+            AND: {
+              type: BioImageType.COVER,
+              AND: {
+                id: {
+                  not: userRecord.coverId,
+                },
+              },
+            },
           },
         ],
-        type: type,
       },
     });
   }
@@ -132,5 +98,61 @@ export class MysqlUserRepository
       },
     });
     return updatedUser !== null;
+  }
+
+  async saveUser(user: UserEntity): Promise<Option<UserEntity>> {
+    const userRecord = this.mapper.toPersistence(user);
+    await this.prisma.$transaction([
+      this.deleteBioImage(userRecord),
+      this.prisma.userRecord.update({
+        where: {
+          id: userRecord.id,
+        },
+        data: {
+          bio: userRecord.bio,
+          firstName: userRecord.firstName,
+          lastName: userRecord.lastName,
+          birthDay: userRecord.birthDay,
+          gender: userRecord.gender,
+          postalCode: userRecord.postalCode,
+          city: userRecord.city,
+          version: {
+            increment: 1,
+          },
+          avatar: {
+            connectOrCreate: userRecord.avatar.id && {
+              where: {
+                id: userRecord.avatar.id,
+              },
+              create: {
+                id: userRecord.avatar.id,
+                size: userRecord.avatar.size,
+                extension: userRecord.avatar.extension,
+                type: userRecord.avatar.type,
+                createdAt: userRecord.avatar.createdAt,
+                updatedAt: userRecord.avatar.updatedAt,
+              },
+            },
+          },
+          cover: {
+            connectOrCreate: userRecord.cover?.id && {
+              where: {
+                id: userRecord.cover?.id,
+              },
+              create: {
+                extension: userRecord.cover?.extension,
+                size: userRecord.cover?.size,
+                type: userRecord.cover?.type,
+                id: userRecord.cover?.id,
+                createdAt: userRecord.cover?.createdAt,
+                updatedAt: userRecord.cover?.updatedAt,
+              },
+            },
+          },
+        },
+      }),
+    ]);
+
+    return await this.findById(userRecord.id);
   }
 }

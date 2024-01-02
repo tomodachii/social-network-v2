@@ -2,10 +2,11 @@ import { Module, Provider, Logger } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { DataAccessPostModule } from '@lib/post/data-access';
 import {
-  MysqlPostRepository,
   MongoPostMapper,
   MongoPostRepository,
-  MysqlPostMapper,
+  MongoUserReplicaRepository,
+  // MysqlPostMapper,
+  // MysqlPostRepository,
 } from './infrastructure-adapter';
 import {
   CreatePostCommandHandler,
@@ -18,15 +19,23 @@ import {
   DeleteCommentCommandHandler,
   ReactPostCommandHandler,
   ReactCommentCommandHandler,
+  CreatePostWhenUserUpdatedBioImageDomainEventHandler,
 } from '@lib/post/feature';
 import {
   HttpCommentController,
   HttpPostController,
   HttpReactController,
+  KafkaUserConsumer,
 } from './interface-adapter';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ContextInterceptor } from '@lib/shared/common/application';
 import { RequestContextModule } from 'nestjs-request-context';
+import {
+  SaveUserReplicaCommandHandler,
+  UpdateAvatarUserReplicaCommandHandler,
+  UpdateCoverUserReplicaCommandHandler,
+  USER_REPLICA_REPOSIROTY,
+} from '@lib/post/replica-user';
 
 const httpControllers = [
   HttpPostController,
@@ -34,7 +43,7 @@ const httpControllers = [
   HttpReactController,
 ];
 
-// const messageControllers = [UserMessageController];
+const consummers = [KafkaUserConsumer];
 
 const commandHandlers: Provider[] = [
   CreatePostCommandHandler,
@@ -45,16 +54,27 @@ const commandHandlers: Provider[] = [
   DeleteCommentCommandHandler,
   ReactPostCommandHandler,
   ReactCommentCommandHandler,
+  SaveUserReplicaCommandHandler,
+  UpdateAvatarUserReplicaCommandHandler,
+  UpdateCoverUserReplicaCommandHandler,
 ];
 
 const queryHandlers: Provider[] = [ViewPostQueryHandler];
 
-const mappers: Provider[] = [MysqlPostMapper];
+const eventHandlers: Provider[] = [
+  CreatePostWhenUserUpdatedBioImageDomainEventHandler,
+];
+
+const mappers: Provider[] = [MongoPostMapper];
 
 const repositories: Provider[] = [
   {
     provide: POST_REPOSITORY,
-    useClass: MysqlPostRepository,
+    useClass: MongoPostRepository,
+  },
+  {
+    provide: USER_REPLICA_REPOSIROTY,
+    useClass: MongoUserReplicaRepository,
   },
 ];
 
@@ -70,12 +90,13 @@ const interceptors = [
 ];
 @Module({
   imports: [CqrsModule, DataAccessPostModule, RequestContextModule],
-  controllers: [...httpControllers],
+  controllers: [...httpControllers, ...consummers],
   providers: [
     Logger,
     ...repositories,
     ...commandHandlers,
     ...queryHandlers,
+    ...eventHandlers,
     ...mappers,
     ...interceptors,
   ],

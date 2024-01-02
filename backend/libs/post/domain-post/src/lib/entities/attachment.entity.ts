@@ -10,7 +10,7 @@ import { Err, Ok, Result } from 'oxide.ts';
 import { AggregateID, Entity } from '@lib/shared/ddd-v2';
 
 export interface AttachmentProps {
-  name: string;
+  extension: string;
   description: string;
   size: number;
   type: AttachmentType;
@@ -18,7 +18,7 @@ export interface AttachmentProps {
 
 export interface CreateAttachmentProps {
   id: AggregateID;
-  name: string;
+  extension: string;
   description: string;
   size: number;
   type: AttachmentType;
@@ -33,33 +33,32 @@ export class AttachmentEntity extends Entity<AttachmentProps, AggregateID> {
     return new AttachmentEntity({ id, props });
   }
 
-  get name(): string {
-    return this.props.name;
+  get extension(): string {
+    return this.props.extension;
+  }
+  set extension(extension: string) {
+    this.props.extension = extension;
   }
 
   get description(): string {
     return this.props.description;
   }
 
-  get size(): number {
-    return this.props.size;
-  }
-
-  get type(): AttachmentType {
-    return this.props.type;
-  }
-
-  set name(name: string) {
-    this.props.name = name;
-  }
-
   set description(description: string) {
     this.props.description = description;
+  }
+
+  get size(): number {
+    return this.props.size;
   }
 
   set size(size: number) {
     this.validate();
     this.props.size = size;
+  }
+
+  get type(): AttachmentType {
+    return this.props.type;
   }
 
   public validate(): Result<void, Error> {

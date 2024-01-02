@@ -1,31 +1,60 @@
 import {
   AvatarUpdatedEvent,
+  CoverUpdatedEvent,
   UserCreatedEvent,
   UserPattern,
 } from '@lib/shared/service-interface';
 import { Inject, Logger } from '@nestjs/common';
 import { ClientKafka } from '@nestjs/microservices';
-import { UserProducer } from '@lib/user/domain';
-import { USER_KAFKA_CLIENT } from '@lib/user/feature';
+import { UserEntity, UserProducer, UserRepository } from '@lib/user/domain';
+import { USER_KAFKA_CLIENT, USER_REPOSITORY } from '@lib/user/feature';
 
 export class KafkaUserProducer implements UserProducer {
   constructor(
     @Inject(USER_KAFKA_CLIENT) private readonly kafkaClient: ClientKafka,
-    private logger: Logger
+    private logger: Logger,
+    @Inject(USER_REPOSITORY) private readonly repo: UserRepository
   ) {}
 
-  publishUserCreatedEvent(user: UserCreatedEvent): void {
-    this.kafkaClient.emit(UserPattern.UserCreated, JSON.stringify(user));
+  publishUserCreatedEvent(user: UserEntity): void {
+    const eventData: UserCreatedEvent = {
+      id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+    };
+    this.kafkaClient.emit(UserPattern.UserCreated, JSON.stringify(eventData));
     this.logger.log(
-      `User created event published: ${JSON.stringify(user)}`,
+      `User created event published: ${JSON.stringify(eventData)}`,
       'user-service'
     );
   }
 
-  publishAvatarUpdatedEvent(avatar: AvatarUpdatedEvent): void {
-    this.kafkaClient.emit(UserPattern.AvatarUpdated, JSON.stringify(avatar));
+  async publishAvatarUpdatedEvent(user: UserEntity): Promise<void> {
+    const eventData: AvatarUpdatedEvent = {
+      userId: user.id,
+      avatarFileId: user.avatar.id,
+      version: 0,
+      extension: user.avatar.getPropsCopy().extension,
+      size: user.avatar.getPropsCopy().size,
+    };
+    this.kafkaClient.emit(UserPattern.AvatarUpdated, JSON.stringify(eventData));
     this.logger.log(
-      `Avatar updated event published: ${JSON.stringify(avatar)}`,
+      `Avatar updated event published: ${JSON.stringify(eventData)}`,
+      'user-service'
+    );
+  }
+
+  publishCoverUpdatedEvent(user: UserEntity): void {
+    const eventData: CoverUpdatedEvent = {
+      userId: user.id,
+      coverFileId: user.cover.id,
+      version: 0,
+      extension: user.cover.getPropsCopy().extension,
+      size: user.cover.getPropsCopy().size,
+    };
+    this.kafkaClient.emit(UserPattern.CoverUpdated, JSON.stringify(eventData));
+    this.logger.log(
+      `Cover updated event published: ${JSON.stringify(eventData)}`,
       'user-service'
     );
   }
