@@ -149,7 +149,7 @@ export abstract class Entity<EntityProps, TKey> {
         HttpStatus.BAD_REQUEST
       );
     }
-    if (Object.keys(props as any).length > MAX_PROPS) {
+    if (Object.keys(props as object).length > MAX_PROPS) {
       throw new ArgumentOutOfRangeException(
         `Entity props should not have more than ${MAX_PROPS} properties`,
         HttpStatus.BAD_REQUEST

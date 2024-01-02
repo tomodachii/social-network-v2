@@ -6,3 +6,4 @@ export * from './mapper.interface';
 export * from './repository';
 export * from './value-object.base';
 export * from './query.base';
+export * from './base.repository';

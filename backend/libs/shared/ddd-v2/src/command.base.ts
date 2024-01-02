@@ -38,12 +38,12 @@ export class Command {
   readonly metadata: CommandMetadata;
 
   constructor(props: CommandProps<unknown>) {
-    // if (Guard.isEmpty(props)) {
-    //   throw new ArgumentNotProvidedException(
-    //     'Command props should not be empty',
-    //     HttpStatus.BAD_REQUEST
-    //   );
-    // }
+    if (Guard.isEmpty(props)) {
+      throw new ArgumentNotProvidedException(
+        'Command props should not be empty',
+        HttpStatus.BAD_REQUEST
+      );
+    }
     const ctx = RequestContextService.getContext();
     this.id = v4();
     this.metadata = {

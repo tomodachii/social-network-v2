@@ -6,10 +6,13 @@ import { EventBus } from '@nestjs/cqrs';
 
 export type AggregateID = string;
 
-export abstract class AggregateRoot<EntityProps> extends Entity<
-  EntityProps,
-  AggregateID
-> {
+export type AggregateRootProps = {
+  version: number;
+};
+
+export abstract class AggregateRoot<
+  EntityProps extends AggregateRootProps
+> extends Entity<EntityProps, AggregateID> {
   private _domainEvents: DomainEvent[] = [];
 
   get domainEvents(): DomainEvent[] {
