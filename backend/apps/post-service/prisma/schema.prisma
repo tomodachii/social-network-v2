@@ -52,7 +52,7 @@ type React {
 type Attachment {
   id          String
   createdAt   DateTime       @default(now())
-  name        String
+  extension   String
   description String
   size        Int
   type        AttachmentType
