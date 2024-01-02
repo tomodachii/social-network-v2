@@ -1,1 +1,1 @@
-export * from './controllers'
+export * from './file-upload.http.controller'
