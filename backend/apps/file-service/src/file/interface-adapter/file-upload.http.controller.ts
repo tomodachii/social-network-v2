@@ -42,6 +42,7 @@ const getNameFromRequestBody = (req: Request): Option<string> => {
 };
 
 uploadRouter.post('/', (req: Request, res: Response) => {
+  console.log(req)
   const uploadSessionId = uuidv4()
   const file: Express.Multer.File = req.file
   const filePathOption: Option<string> = getPathFromRequestBody(req)
@@ -63,7 +64,7 @@ uploadRouter.post('/', (req: Request, res: Response) => {
             (fileName: string) =>
               right(
                 saveFile(
-                  path.join(__dirname, '..', 'data', filePath),
+                  path.join(__dirname, 'data', filePath),
                   fileName
                 )(file)
               )

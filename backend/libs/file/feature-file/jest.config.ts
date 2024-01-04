@@ -1,6 +1,6 @@
 /* eslint-disable */
 export default {
-  displayName: 'file-feature-file',
+  displayName: 'feature-file',
   preset: '../../../jest.preset.js',
   testEnvironment: 'node',
   transform: {

@@ -1,5 +1,5 @@
 {
-  "name": "file-feature-file",
+  "name": "feature-file",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/file/feature-file/src",
   "projectType": "library",

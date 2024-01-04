@@ -1,3 +1,3 @@
 export function fileFeatureFile(): string {
-  return 'file-feature-file';
+  return 'feature-file';
 }

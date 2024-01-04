@@ -10,10 +10,13 @@ const upload = multer()
 
 app.use(express.json());
 
+app.get('/', (req, res) => {
+  res.send('Hello, Express!');
+});
 
 app.use('/upload', upload.single('file'), uploadRouter);
 
-app.listen(port, host, () => {
+app.listen(port, "0.0.0.0", () => {
   console.log(`[ ready ] http://${host}:${port}`);
 });
 
