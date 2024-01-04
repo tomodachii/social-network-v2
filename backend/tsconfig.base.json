@@ -30,8 +30,8 @@
       "@lib/user/data-access": ["libs/user/data-access-user/src/index.ts"],
       "@lib/user/domain": ["libs/user/domain-user/src/index.ts"],
       "@lib/user/feature": ["libs/user/feature-user/src/index.ts"],
-      "file/data-access-file": ["libs/file/data-access-file/src/index.ts"],
-      "file/feature-file": ["libs/file/feature-file/src/index.ts"]
+      "@lib/file/data-access": ["libs/file/data-access-file/src/index.ts"],
+      "@lib/file/feature": ["libs/file/feature-file/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
