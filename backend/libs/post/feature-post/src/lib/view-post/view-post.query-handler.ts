@@ -1,6 +1,7 @@
 import { QueryBase } from '@lib/shared/ddd-v2';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { PrismaMongoPostService } from '@lib/post/data-access';
+import { ObjectLiteral } from '@lib/shared/common/types';
 
 export class ViewPostQuery extends QueryBase {
   constructor(public readonly id: string) {
@@ -37,59 +38,61 @@ export class ViewPostQuery extends QueryBase {
 @QueryHandler(ViewPostQuery)
 export class ViewPostQueryHandler implements IQueryHandler<ViewPostQuery> {
   constructor(private readonly prisma: PrismaMongoPostService) {}
-  async execute(query: ViewPostQuery) {
-    return await this.prisma.postDocument.findUnique({
-      where: {
-        postId: query.id,
-      },
-      select: {
-        postId: true,
-        content: true,
-        mode: true,
-        createdAt: true,
-        updatedAt: true,
-        originalPost: {
-          select: {
-            attachments: true,
-            content: true,
-            createdAt: true,
-            mode: true,
-            postId: true,
-            user: {
-              select: {
-                userId: true,
-                firstName: true,
-                lastName: true,
-                avatarFileId: true,
+  async execute(query: ViewPostQuery): Promise<ObjectLiteral> {
+    return (
+      (await this.prisma.postDocument.findUnique({
+        where: {
+          postId: query.id,
+        },
+        select: {
+          postId: true,
+          content: true,
+          mode: true,
+          createdAt: true,
+          updatedAt: true,
+          originalPost: {
+            select: {
+              attachments: true,
+              content: true,
+              createdAt: true,
+              mode: true,
+              postId: true,
+              user: {
+                select: {
+                  userId: true,
+                  firstName: true,
+                  lastName: true,
+                  avatarFileId: true,
+                },
+              },
+              comments: {
+                select: {
+                  id: true,
+                },
               },
             },
-            comments: {
-              select: {
-                id: true,
-              },
+          },
+          user: {
+            select: {
+              userId: true,
+              firstName: true,
+              lastName: true,
+              avatarFileId: true,
+            },
+          },
+          comments: {
+            select: {
+              id: true,
+              content: true,
+              createdAt: true,
+              updatedAt: true,
+              reacts: true,
+              userId: true,
             },
           },
         },
-        user: {
-          select: {
-            userId: true,
-            firstName: true,
-            lastName: true,
-            avatarFileId: true,
-          },
-        },
-        comments: {
-          select: {
-            id: true,
-            content: true,
-            createdAt: true,
-            updatedAt: true,
-            reacts: true,
-            userId: true,
-          },
-        },
-      },
-    });
+      })) || {}
+    );
   }
 }
 

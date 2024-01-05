@@ -17,6 +17,7 @@ import {
   UpdatePostCommand,
   ViewPostQuery,
 } from '@lib/post/feature';
+import { ObjectLiteral } from '@lib/shared/common/types';
 
 @Controller('posts')
 export class HttpPostController {
@@ -27,8 +28,10 @@ export class HttpPostController {
 
   @Get(':postId')
   async getPostById(@Param('postId') postId: string) {
-    const result = await this.queryBus.execute(new ViewPostQuery(postId));
-    return result;
+    const result: ObjectLiteral = await this.queryBus.execute(
+      new ViewPostQuery(postId)
+    );
+    return new BaseResponse<ObjectLiteral>(result);
   }
 
   @Post()

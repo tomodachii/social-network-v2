@@ -1,12 +1,13 @@
 import { HttpStatus } from '@lib/shared/common/api';
 import { ApiProperty } from '@nestjs/swagger';
+import { ObjectLiteral } from '../types';
 
 interface ResponseMetaData {
   message: string | string[];
   isSuccess: boolean;
   status: HttpStatus;
   serviceId: string;
-  extraMeta: any;
+  extraMeta: ObjectLiteral;
 }
 
 export class BaseResponse<T> {

@@ -2,7 +2,6 @@ import {
   ExceptionFilter,
   Catch,
   ArgumentsHost,
-  HttpException,
   HttpStatus,
   Logger,
 } from '@nestjs/common';
@@ -25,8 +24,9 @@ export class AllExceptionsFilter implements ExceptionFilter {
 
     const ctx = host.switchToHttp();
 
-    if (exception.hasOwnProperty('response')) {
-      const message = exception.response?.message || '';
+    if ('response' in exception) {
+      const message =
+        (exception.response as { message: string })?.message || '';
       const responseBody = {
         meta: {
           isSuccess: false,
