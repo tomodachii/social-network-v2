@@ -15,7 +15,7 @@ export class FindUserByIdQueryHandler
    * domain and repository layers completely
    * and execute query directly
    */
-  async execute(query: FindUserByIdQuery): Promise<Result<any, Error>> {
+  async execute(query: FindUserByIdQuery): Promise<Result<unknown, Error>> {
     const user = await this.prisma.userRecord.findUnique({
       where: {
         id: query.userId,

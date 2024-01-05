@@ -1,6 +1,10 @@
+import { ObjectLiteral } from '@lib/shared/common/types';
 import { Entity } from './entity.base';
 
-export interface Mapper<DomainEntity extends Entity<any, any>, DbRecord> {
+export interface Mapper<
+  DomainEntity extends Entity<unknown, unknown>,
+  DbRecord
+> {
   toPersistence(entity: DomainEntity): DbRecord;
-  toDomain(record: any): DomainEntity;
+  toDomain(record: ObjectLiteral): DomainEntity;
 }

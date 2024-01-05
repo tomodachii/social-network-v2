@@ -10,7 +10,7 @@ import { RequestContextService } from './AppRequestContext';
 
 @Injectable()
 export class ContextInterceptor implements NestInterceptor {
-  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+  intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
     const request = context.switchToHttp().getRequest();
 
     /**

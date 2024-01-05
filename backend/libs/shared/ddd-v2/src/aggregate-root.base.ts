@@ -6,9 +6,9 @@ import { EventBus } from '@nestjs/cqrs';
 
 export type AggregateID = string;
 
-export type AggregateRootProps = {
+export interface AggregateRootProps {
   version: number;
-};
+}
 
 export abstract class AggregateRoot<
   EntityProps extends AggregateRootProps
