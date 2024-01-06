@@ -16,10 +16,10 @@ app.use('/assets', express.static(path.join(__dirname, 'assets')));
 
 // Mount the routers
 app.use(cors());
-app.use('/encode', encodeRouter);
-app.use('/decode', decodeRouter);
-app.use('/create-credential', createCredentialRouter);
-app.use('/rollback-credential', rollbackCredentialRouter);
+app.use('/encode/v1', encodeRouter);
+app.use('/decode/v1', decodeRouter);
+app.use('/create-credential/v1', createCredentialRouter);
+app.use('/rollback-credential/v1', rollbackCredentialRouter);
 
 const port = process.env.PORT || 3001;
 const server = app.listen(port, () => {
