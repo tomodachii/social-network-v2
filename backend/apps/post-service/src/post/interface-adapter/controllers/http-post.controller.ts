@@ -19,7 +19,7 @@ import {
 } from '@lib/post/feature';
 import { ObjectLiteral } from '@lib/shared/common/types';
 
-@Controller('posts')
+@Controller('posts/v1')
 export class HttpPostController {
   constructor(
     private readonly commandBus: CommandBus,
