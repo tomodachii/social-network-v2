@@ -1,4 +1,4 @@
-import { IsString, IsUUID } from 'class-validator';
+import { IsString, IsUUID, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 import { AttachmentDto } from './attachment.dto';
 
@@ -10,5 +10,6 @@ export class CreateCommentDto {
   content: string;
 
   @Type(() => AttachmentDto)
+  @ValidateNested()
   attachments: AttachmentDto[];
 }
