@@ -12,7 +12,7 @@
         "platform": "node",
         "outputPath": "dist/apps/file-service",
         "format": ["cjs"],
-        "bundle": false,
+        "bundle": true,
         "main": "apps/file-service/src/main.ts",
         "tsConfig": "apps/file-service/tsconfig.app.json",
         "assets": ["apps/file-service/src/assets"],

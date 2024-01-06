@@ -1,4 +1,4 @@
-import { IMAGE_FILE_EXTENSION, VIDEO_FILE_EXTENSION, DOCUMENT_FILE_EXTENSION, FILE_TYPE } from "./file.type";
+import { IMAGE_FILE_EXTENSION, VIDEO_FILE_EXTENSION, DOCUMENT_FILE_EXTENSION, FILE_TYPE, FILE_TYPE_PREFIX } from "./file.type";
 import { Opaque } from '@lib/shared/common/types';
 import { match } from 'ts-pattern'
 
@@ -52,8 +52,15 @@ export type DocumentFile = {
 
 export type File = ImageFile | VideoFile | DocumentFile
 
+const getFileTypePrefix = (fileType: FILE_TYPE): string =>
+  match (fileType)
+    .with(FILE_TYPE.IMAGE, () => FILE_TYPE_PREFIX.IMAGE)
+    .with(FILE_TYPE.VIDEO, () => FILE_TYPE_PREFIX.VIDEO)
+    .with(FILE_TYPE.DOCUMENT, () => FILE_TYPE_PREFIX.DOCUMENT)
+    .exhaustive()
+
 export const getFilePrefixString = (filePrefix: FilePrefix): string => {
-  return `${filePrefix.service}/${filePrefix.owner}/${filePrefix.type}`
+  return `${filePrefix.service}/${filePrefix.owner}/${getFileTypePrefix(filePrefix.type)}`
 }
 
 export const getFileNameString = (file: File): string => {

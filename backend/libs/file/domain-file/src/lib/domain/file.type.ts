@@ -1,4 +1,10 @@
 export enum FILE_TYPE {
+  IMAGE = "image",
+  VIDEO = "video",
+  DOCUMENT = "document"
+}
+
+export enum FILE_TYPE_PREFIX {
   IMAGE = "images",
   VIDEO = "videos",
   DOCUMENT = "documents"
