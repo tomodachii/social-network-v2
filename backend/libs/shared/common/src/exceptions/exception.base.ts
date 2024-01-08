@@ -29,7 +29,7 @@ export class Exception extends Error {
 
   public readonly correlationId: string;
 
-  public readonly response?: any;
+  public readonly response?: unknown;
 
   /**
    * @param {string} message

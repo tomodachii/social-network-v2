@@ -5,7 +5,7 @@ import { BaseResponse } from '@lib/shared/common/api';
 import { ReactCommentDto, ReactPostDto } from '../dtos';
 import { ReactCommentCommand, ReactPostCommand } from '@lib/post/feature';
 
-@Controller('posts/:postId/reacts')
+@Controller('posts/v1/:postId/reacts')
 export class HttpReactController {
   constructor(private readonly commandBus: CommandBus) {}
 

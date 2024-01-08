@@ -9,7 +9,7 @@ import {
   UpdateCommentCommand,
 } from '@lib/post/feature';
 
-@Controller('posts/:postId/comments')
+@Controller('posts/v1/:postId/comments')
 export class HttpCommentController {
   constructor(private readonly commandBus: CommandBus) {}
 

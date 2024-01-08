@@ -24,7 +24,7 @@ import {
   UpdateCoverCommand,
 } from '@lib/user/feature';
 
-@Controller('users')
+@Controller('users/v1')
 export class HttpUserController {
   constructor(
     private readonly commandBus: CommandBus,

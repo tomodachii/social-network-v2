@@ -6,6 +6,7 @@ import {
 } from '@lib/shared/common/exceptions';
 import { Guard } from '@lib/shared/common/utils';
 import { convertPropsToObject } from './utils';
+import { ObjectLiteral } from '@lib/shared/common/types';
 
 export type AggregateID = string;
 
@@ -149,7 +150,7 @@ export abstract class Entity<EntityProps> {
         HttpStatus.BAD_REQUEST
       );
     }
-    if (Object.keys(props as any).length > MAX_PROPS) {
+    if (Object.keys(props as ObjectLiteral).length > MAX_PROPS) {
       throw new ArgumentOutOfRangeException(
         `Entity props should not have more than ${MAX_PROPS} properties`,
         HttpStatus.BAD_REQUEST
