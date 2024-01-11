@@ -8,7 +8,6 @@ import * as E from 'fp-ts/lib/Either'
 import { Either, left, right } from 'fp-ts/lib/Either'
 import { TaskEither } from 'fp-ts/lib/TaskEither';
 import { pipe } from 'fp-ts/lib/function'
-// import { setFileStatus } from '../infrastructure-adapter/file.status.adapter';
 
 export const uploadRouter = Router();
 
@@ -16,7 +15,7 @@ const getPathFromRequestBody = (req: Request): Option<string> => {
   const filePathOption = O.fromNullable<string>(req.body.path);
   return O.match(
     () => none,
-    (filePath) => {
+    (filePath: string) => {
       if (typeof filePath === 'string' && filePath !== '') {
         return some(filePath);
       } else {
@@ -28,10 +27,10 @@ const getPathFromRequestBody = (req: Request): Option<string> => {
 
 
 const getNameFromRequestBody = (req: Request): Option<string> => {
-  const fileNameOption = O.fromNullable<string>(req.body.name);
+  const fileNameOption = O.fromNullable<string>(req.body.name)
   return O.match(
     () => none,
-    (fileName) => {
+    (fileName: string) => {
       if (typeof fileName === 'string' && fileName !== '') {
         return some(fileName);
       } else {
@@ -41,36 +40,53 @@ const getNameFromRequestBody = (req: Request): Option<string> => {
   )(fileNameOption);
 };
 
+const getFileFromRequestBody = (req: Request): Option<Express.Multer.File> => {
+  const fileOption = O.fromNullable<Express.Multer.File>(req.file)
+  return O.match(
+    () => none,
+    (file: Express.Multer.File) => {
+      if (file.buffer) {
+        return some(file);
+      } else {
+        return none;
+      }
+    }
+  )(fileOption);
+}
+
 uploadRouter.post('/', (req: Request, res: Response) => {
   console.log(req)
   const uploadSessionId = uuidv4()
-  const file: Express.Multer.File = req.file
+  const fileOption: Option<Express.Multer.File> = getFileFromRequestBody(req)
   const filePathOption: Option<string> = getPathFromRequestBody(req)
   const fileNameOption: Option<string> = getNameFromRequestBody(req)
 
-  const resultEither: Either<string, TaskEither<Error, void>> = pipe(
+  // validate request body step
+  const requestValidationResult: Either<string, TaskEither<Error, void>> = pipe(
     filePathOption,
     O.match(
-      () => {
-        return left('Error: Missing file path');
-      },
+      () => left('Error: Missing file path'),
       (filePath: string) =>
         pipe(
           fileNameOption,
           O.match(
-            () => {
-              return left('Error: Missing file name');
-            },
+            () => left('Error: Missing file name'),
             (fileName: string) =>
-              right(
-                saveFile(
-                  path.join(__dirname, 'data', filePath),
-                  fileName
-                )(file)
+              pipe(
+                fileOption,
+                O.match(
+                  () => left('Error: File content is missing'),
+                  (file) => right(
+                    saveFile(
+                      path.join(__dirname, 'data', filePath),
+                      fileName
+                    )(file)
+                  )
+                )
               )
           )
         )
-    )
+    ),
   );
 
   E.match(
@@ -85,5 +101,5 @@ uploadRouter.post('/', (req: Request, res: Response) => {
         )
       );
     }
-  )(resultEither);
+  )(requestValidationResult);
 });
