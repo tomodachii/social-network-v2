@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
-import { saveFile } from '../infrastructure-adapter/file.repository';
+import { saveFile } from '../../infrastructure-adapter/file.repository';
 import path from 'path'
 import * as O from 'fp-ts/lib/Option'
 import { Option, none, some } from 'fp-ts/lib/Option';
@@ -11,18 +11,32 @@ import { pipe } from 'fp-ts/lib/function'
 
 export const uploadRouter = Router();
 
-const getPathFromRequestBody = (req: Request): Option<string> => {
-  const filePathOption = O.fromNullable<string>(req.body.path);
+const getServiceFromRequestBody = (req: Request): Option<string> => {
+  const serviceOption = O.fromNullable<string>(req.body.path);
   return O.match(
     () => none,
-    (filePath: string) => {
-      if (typeof filePath === 'string' && filePath !== '') {
-        return some(filePath);
+    (service: string) => {
+      if (typeof service === 'string' && service !== '') {
+        return some(service);
       } else {
         return none;
       }
     }
-  )(filePathOption);
+  )(serviceOption);
+};
+
+const getUserIDFromRequestBody = (req: Request): Option<string> => {
+  const userIDOption = O.fromNullable<string>(req.body.path);
+  return O.match(
+    () => none,
+    (userID: string) => {
+      if (typeof userID === 'string' && userID !== '') {
+        return some(userID);
+      } else {
+        return none;
+      }
+    }
+  )(userIDOption);
 };
 
 
@@ -55,18 +69,18 @@ const getFileFromRequestBody = (req: Request): Option<Express.Multer.File> => {
 }
 
 uploadRouter.post('/', (req: Request, res: Response) => {
-  console.log(req.file)
   const uploadSessionId = uuidv4()
+  const serviceOption: Option<string> = getServiceFromRequestBody(req)
   const fileOption: Option<Express.Multer.File> = getFileFromRequestBody(req)
-  const filePathOption: Option<string> = getPathFromRequestBody(req)
+  const userIDOption: Option<string> = getUserIDFromRequestBody(req)
   const fileNameOption: Option<string> = getNameFromRequestBody(req)
 
   // validate request body step
   const requestValidationResult: Either<string, TaskEither<Error, void>> = pipe(
-    filePathOption,
+    userIDOption,
     O.match(
-      () => left('Error: Missing file path'),
-      (filePath: string) =>
+      () => left('Error: Missing userID'),
+      (userID: string) =>
         pipe(
           fileNameOption,
           O.match(
@@ -78,7 +92,7 @@ uploadRouter.post('/', (req: Request, res: Response) => {
                   () => left('Error: File content is missing'),
                   (file) => right(
                     saveFile(
-                      path.join(__dirname, 'data', filePath),
+                      path.join(__dirname, 'data', userID),
                       fileName
                     )(file)
                   )

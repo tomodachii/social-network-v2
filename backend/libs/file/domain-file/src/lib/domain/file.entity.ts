@@ -76,11 +76,19 @@ const getFileNameStringPath = (file: File): string => {
   return `${file.name}.${file.ext}`
 }
 
-export const getFileURLStringPath = (file: File): Either<string, string> => {
+export const getFileURL = (file: File): Either<string, string> => {
   const fileTypePrefixEither = createFileTypePrefixFromExtension(file.ext)
   return E.match(
     (err: string) => left(err),
     (fileTypePrefix) => right(`${getFilePrefixStringPath(file.prefix)}/${fileTypePrefix}/${getFileNameStringPath(file)}`)
+  )(fileTypePrefixEither)
+}
+
+export const getFilePath = (file: File): Either<string, string> => {
+  const fileTypePrefixEither = createFileTypePrefixFromExtension(file.ext)
+  return E.match(
+    (err: string) => left(err),
+    (fileTypePrefix) => right(`/${getFilePrefixStringPath(file.prefix)}/${fileTypePrefix}`)
   )(fileTypePrefixEither)
 }
 
