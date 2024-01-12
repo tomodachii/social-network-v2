@@ -2,8 +2,9 @@ import {
   IMAGE_FILE_EXTENSION, 
   VIDEO_FILE_EXTENSION, 
   DOCUMENT_FILE_EXTENSION, 
-  FILE_TYPE, 
   FILE_TYPE_PREFIX,
+  FILE_DOMAIN_EXCEPTION,
+  MIMETYPE
 } from "./file.type";
 import { Opaque } from '@lib/shared/common/types'
 import { match } from 'ts-pattern'
@@ -12,50 +13,36 @@ import * as E from 'fp-ts/lib/Either'
 
 export type ServicePrefix = Opaque<string, 'ServicePrefix'>
 
-export type FileType = FILE_TYPE.IMAGE | FILE_TYPE.VIDEO | FILE_TYPE.DOCUMENT
-
-export type ImageFilePrefix = {
+export type FilePrefix = {
   service: ServicePrefix,
-  owner: String
-  type: FILE_TYPE.IMAGE,
+  owner: string
 }
 
-export type VideoFilePrefix = {
-  service: ServicePrefix,
-  owner: String
-  type: FILE_TYPE.VIDEO,
-}
-
-export type DocumentFilePrefix = {
-  service: ServicePrefix,
-  owner: String
-  type: FILE_TYPE.DOCUMENT,
-}
-
-export type FilePrefix = ImageFilePrefix | VideoFilePrefix | DocumentFilePrefix
-
-export type ImageExtension = IMAGE_FILE_EXTENSION.JPG | IMAGE_FILE_EXTENSION.PNG;
+export type ImageExtension = IMAGE_FILE_EXTENSION.JPG | IMAGE_FILE_EXTENSION.PNG | IMAGE_FILE_EXTENSION.JPEG;
 export type VideoExtension = VIDEO_FILE_EXTENSION.MP4;
 export type DocumentExtension = DOCUMENT_FILE_EXTENSION.TXT | DOCUMENT_FILE_EXTENSION.PDF;
 
 export type FileExtension = ImageExtension | VideoExtension | DocumentExtension
 
 export type ImageFile = {
-  prefix: ImageFilePrefix,
+  prefix: FilePrefix,
   ext: ImageExtension,
-  name: String
+  name: string,
+  size: number
 }
 
 export type VideoFile = {
-  prefix: VideoFilePrefix,
+  prefix: FilePrefix,
   ext: VideoExtension,
-  name: String
+  name: string,
+  size: number
 }
 
 export type DocumentFile = {
-  prefix: DocumentFilePrefix,
+  prefix: FilePrefix,
   ext: DocumentExtension,
-  name: String
+  name: string,
+  size: number
 }
 
 export type File = ImageFile | VideoFile | DocumentFile
@@ -63,16 +50,16 @@ export type File = ImageFile | VideoFile | DocumentFile
 /**
  * Matches the file type with actual prefix
  *
- * @param fileType - The type of FilePrefix entity
+ * @param ext - The mimetype of file for example: 'image/png'
  * @returns The actual file type prefix for path
  */
-type GetFileTypePrefix = (fileType: FILE_TYPE) => FILE_TYPE_PREFIX
-const getFileTypePrefix: GetFileTypePrefix = (fileType) =>
-  match (fileType)
-    .with(FILE_TYPE.IMAGE, () => FILE_TYPE_PREFIX.IMAGE)
-    .with(FILE_TYPE.VIDEO, () => FILE_TYPE_PREFIX.VIDEO)
-    .with(FILE_TYPE.DOCUMENT, () => FILE_TYPE_PREFIX.DOCUMENT)
-    .exhaustive()
+type CreateFileTypePrefixFromExtension = (ext: FileExtension) => Either<string, FILE_TYPE_PREFIX>
+const createFileTypePrefixFromExtension: CreateFileTypePrefixFromExtension = (ext) =>
+  match (ext)
+    .with(IMAGE_FILE_EXTENSION.JPG, IMAGE_FILE_EXTENSION.PNG, IMAGE_FILE_EXTENSION.JPEG, () => right(FILE_TYPE_PREFIX.IMAGE))
+    .with(VIDEO_FILE_EXTENSION.MP4, () => right(FILE_TYPE_PREFIX.VIDEO))
+    .with(DOCUMENT_FILE_EXTENSION.PDF, DOCUMENT_FILE_EXTENSION.TXT, () => right(FILE_TYPE_PREFIX.DOCUMENT))
+    .otherwise(() => left(FILE_DOMAIN_EXCEPTION.INVALID_FILE_EXTENSION))
 
 /**
  * Returns the FilePrefix string path
@@ -80,64 +67,71 @@ const getFileTypePrefix: GetFileTypePrefix = (fileType) =>
  * @param filePrefix - The FilePrefix entity
  * @returns The string path from FilePrefix entity
  */
-export type GetFilePrefixStringPath = (filePrefix: FilePrefix) => string
-export const getFilePrefixStringPath: GetFilePrefixStringPath = (filePrefix) => {
-  return `${filePrefix.service}/${filePrefix.owner}/${getFileTypePrefix(filePrefix.type)}`
+type GetFilePrefixStringPath = (filePrefix: FilePrefix) => string
+const getFilePrefixStringPath: GetFilePrefixStringPath = (filePrefix) => {
+  return `${filePrefix.service}/${filePrefix.owner}`
 }
 
-export const getFileNameStringPath = (file: File): string => {
+const getFileNameStringPath = (file: File): string => {
   return `${file.name}.${file.ext}`
 }
 
-export const getFileURLStringPath = (file: File): string => {
-  return `${getFilePrefixStringPath(file.prefix)}/${getFileNameStringPath(file)}`
+export const getFileURLStringPath = (file: File): Either<string, string> => {
+  const fileTypePrefixEither = createFileTypePrefixFromExtension(file.ext)
+  return E.match(
+    (err: string) => left(err),
+    (fileTypePrefix) => right(`${getFilePrefixStringPath(file.prefix)}/${fileTypePrefix}/${getFileNameStringPath(file)}`)
+  )(fileTypePrefixEither)
 }
 
-const createImageFilePrefix = (service: ServicePrefix, owner: String): ImageFilePrefix => ({ service, owner, type: FILE_TYPE.IMAGE })
-const createVideoFilePrefix = (service: ServicePrefix, owner: String): VideoFilePrefix => ({ service, owner, type: FILE_TYPE.VIDEO })
-const createDocumentFilePrefix = (service: ServicePrefix, owner: String): DocumentFilePrefix => ({ service, owner, type: FILE_TYPE.DOCUMENT })
+const createFilePrefix = (service: ServicePrefix, owner: string): FilePrefix => ({
+  service,
+  owner
+})
 
-export const createFilePrefix = (service: ServicePrefix, owner: String, type: FileType): FilePrefix => 
-  match(type)
-    .with(FILE_TYPE.IMAGE, (_) => createImageFilePrefix(service, owner))
-    .with(FILE_TYPE.VIDEO, (_) => createVideoFilePrefix(service, owner))
-    .with(FILE_TYPE.DOCUMENT, (_) => createDocumentFilePrefix(service, owner))
-    .exhaustive()
-
-const isPrefix = (type: FILE_TYPE) => (prefix: FilePrefix) => prefix.type === type
-const isImageFilePrefix = isPrefix(FILE_TYPE.IMAGE)
-const isVideoFilePrefix = isPrefix(FILE_TYPE.VIDEO)
-const isDocumentFilePrefix = isPrefix(FILE_TYPE.DOCUMENT)
-
-const isImageExtension = (ext: FileExtension): ext is ImageExtension =>
-  ext === IMAGE_FILE_EXTENSION.JPG || ext === IMAGE_FILE_EXTENSION.PNG
-
-const isVideoExtension = (ext: FileExtension): ext is VideoExtension =>
-  ext === VIDEO_FILE_EXTENSION.MP4
-
-const isDocumentExtension = (ext: FileExtension): ext is DocumentExtension =>
-  ext === DOCUMENT_FILE_EXTENSION.PDF || ext === DOCUMENT_FILE_EXTENSION.TXT
-
-const createImagefile = (prefix: ImageFilePrefix, name: String, ext: ImageExtension): Either<string, ImageFile> => {
-  if(!isImageFilePrefix) return left("Invalid Prefix")
-  if(!isImageExtension) return left("Invalid Extension")
-  return right({ prefix, ext, name })
+const createImagefile = (prefix: FilePrefix, name: string, ext: ImageExtension, size: number): Either<string, ImageFile> => {
+  // validate size and encoding, can even do pattern matching case png, jpg ...
+  return right({ prefix, ext, name, size })
 }
 
-// export const createFile = (prefix: FilePrefix, name: String, ext: FileExtension): Either<string, File> =>
-//   match(ext)
-//     .with(IMAGE_FILE_EXTENSION.JPG || IMAGE_FILE_EXTENSION.PNG, (_) => createImagefile(prefix as ImageFilePrefix, name, ext as ImageExtension))
-//     .with(VIDEO_FILE_EXTENSION.MP4, (_) => ({prefix: prefix as VideoFilePrefix, ext: ext as VideoExtension, name: name }))
-//     .with(DOCUMENT_FILE_EXTENSION.TXT || DOCUMENT_FILE_EXTENSION.PDF, (_) => ({ prefix: prefix as DocumentFilePrefix, ext: ext as DocumentExtension, name: name }))
-//     .exhaustive()
+const createVideoFile = (prefix: FilePrefix, name: string, ext: VideoExtension, size: number): Either<string, VideoFile> => {
+  // validate size and encoding
+  return right({ prefix, ext, name, size })
+}
 
-// const image_prefix = createFilePrefix("user" as ServicePrefix, "uid", FILE_TYPE.IMAGE)
-// createFile(image_prefix, "something", IMAGE_FILE_EXTENSION.JPG)
-// createFile(image_prefix, "something", VIDEO_FILE_EXTENSION.MP4)
+const createDocumentFile = (prefix: FilePrefix, name: string, ext: DocumentExtension, size: number): Either<string, DocumentFile> => {
+  // validate size and encoding
+  return right({ prefix, ext, name, size })
+}
+
+type CreateExtFromMimeType = (mimetype: string) => Either<string, FileExtension>
+const createExtFromMimeType: CreateExtFromMimeType = (mimetype) =>
+  match(mimetype)
+    .with(MIMETYPE.APPLICATION_PDF, () => right(DOCUMENT_FILE_EXTENSION.PDF))
+    .with(MIMETYPE.IMAGE_JPEG, () => right(IMAGE_FILE_EXTENSION.JPEG))
+    .with(MIMETYPE.IMAGE_JPG, () => right(IMAGE_FILE_EXTENSION.JPG))
+    .with(MIMETYPE.IMAGE_PNG, () => right(IMAGE_FILE_EXTENSION.PNG))
+    .with(MIMETYPE.TEXT_PLAIN, () => right(DOCUMENT_FILE_EXTENSION.TXT))
+    .with(MIMETYPE.VIDEO_MP4, () => right(VIDEO_FILE_EXTENSION.MP4))
+    .otherwise((mimetype) => left(`Invalid or non supported mimetype ${mimetype}`))
+
 type CreateFile = (
   service: ServicePrefix,
   ownerID: string,
-  type: FileType,
   name: string,
-  ext: FileExtension
+  mimetype: string,
+  size: number
 ) => Either<string, File>
+
+export const createFile: CreateFile = (service, ownerID, name, mimetype, size): Either<string, File> => {
+  const prefix = createFilePrefix(service, ownerID)
+  const extEither = createExtFromMimeType(mimetype)
+  return E.match(
+    (err: string) => left(err),
+    (ext: FileExtension) => match(ext)
+      .with(IMAGE_FILE_EXTENSION.JPG, IMAGE_FILE_EXTENSION.PNG, IMAGE_FILE_EXTENSION.JPEG, (_) => createImagefile(prefix, name, ext as ImageExtension, size))
+      .with(VIDEO_FILE_EXTENSION.MP4, (_) => createVideoFile(prefix, name, ext as VideoExtension, size))
+      .with(DOCUMENT_FILE_EXTENSION.TXT, DOCUMENT_FILE_EXTENSION.PDF, (_) => createDocumentFile(prefix, name, ext as DocumentExtension, size))
+      .exhaustive()
+  )(extEither)
+}

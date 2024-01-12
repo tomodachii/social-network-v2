@@ -55,7 +55,7 @@ const getFileFromRequestBody = (req: Request): Option<Express.Multer.File> => {
 }
 
 uploadRouter.post('/', (req: Request, res: Response) => {
-  console.log(req)
+  console.log(req.file)
   const uploadSessionId = uuidv4()
   const fileOption: Option<Express.Multer.File> = getFileFromRequestBody(req)
   const filePathOption: Option<string> = getPathFromRequestBody(req)
