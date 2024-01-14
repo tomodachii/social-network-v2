@@ -1,20 +1,19 @@
 import {
   AttachmentRecord,
   CommentPersistent,
-  PostPrersistent,
+  PostPersistent,
   PostRecord,
   PrismaMysqlPostService,
   ReactRecord,
 } from '@lib/post/data-access';
 import { BaseRepository } from '@lib/shared/ddd-v2';
-import { Injectable, Logger } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 import { PostEntity, PostRepository } from '@lib/post/domain';
 import { EventBus } from '@nestjs/cqrs';
 import { MysqlPostMapper } from './mysql-post.mapper';
 import { Option } from 'oxide.ts';
 import { v4 } from 'uuid';
 
-@Injectable()
 export class MysqlPostRepository
   extends BaseRepository<PostEntity, PostRecord>
   implements PostRepository
@@ -42,7 +41,7 @@ export class MysqlPostRepository
         reacts: true,
         attachments: true,
       },
-    })) as PostPrersistent;
+    })) as PostPersistent;
     // return Option.safe(() => this.mapper.toDomain(postRecord));
     const result = this.mapper.toDomain(postRecord);
     return Option.safe(() => result);

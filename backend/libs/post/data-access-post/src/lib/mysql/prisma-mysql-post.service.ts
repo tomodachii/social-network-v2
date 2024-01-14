@@ -20,7 +20,7 @@ export type CommentPersistent = CommentRecord & {
   replies: CommentPersistent[];
 };
 
-export type PostPrersistent = PostRecord & {
+export type PostPersistent = PostRecord & {
   attachments: AttachmentRecord[];
   comments: CommentPersistent[];
   reacts: ReactRecord[];

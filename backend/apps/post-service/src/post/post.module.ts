@@ -2,6 +2,8 @@ import { Module, Provider, Logger } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { DataAccessPostModule } from '@lib/post/data-access';
 import {
+  KafkaConfig,
+  KafkaPostProducer,
   MongoPostMapper,
   MongoPostRepository,
   MongoUserReplicaRepository,
@@ -20,6 +22,7 @@ import {
   ReactPostCommandHandler,
   ReactCommentCommandHandler,
   CreatePostWhenUserUpdatedBioImageDomainEventHandler,
+  POST_PRODUCER,
 } from '@lib/post/feature';
 import {
   HttpCommentController,
@@ -27,15 +30,13 @@ import {
   HttpReactController,
   KafkaUserConsumer,
 } from './interface-adapter';
-import { APP_INTERCEPTOR } from '@nestjs/core';
-import { ContextInterceptor } from '@lib/shared/common/application';
-import { RequestContextModule } from 'nestjs-request-context';
 import {
   SaveUserReplicaCommandHandler,
   UpdateAvatarUserReplicaCommandHandler,
   UpdateCoverUserReplicaCommandHandler,
-  USER_REPLICA_REPOSIROTY,
+  USER_REPLICA_REPOSITORY,
 } from '@lib/post/replica-user';
+import { ClientsModule } from '@nestjs/microservices';
 
 const httpControllers = [
   HttpPostController,
@@ -43,7 +44,9 @@ const httpControllers = [
   HttpReactController,
 ];
 
-const consummers = [KafkaUserConsumer];
+const consumers = [KafkaUserConsumer];
+
+const producers: Provider[] = [KafkaPostProducer];
 
 const commandHandlers: Provider[] = [
   CreatePostCommandHandler,
@@ -73,24 +76,22 @@ const repositories: Provider[] = [
     useClass: MongoPostRepository,
   },
   {
-    provide: USER_REPLICA_REPOSIROTY,
+    provide: POST_PRODUCER,
+    useClass: KafkaPostProducer,
+  },
+  {
+    provide: USER_REPLICA_REPOSITORY,
     useClass: MongoUserReplicaRepository,
   },
 ];
 
-const interceptors = [
-  {
-    provide: APP_INTERCEPTOR,
-    useClass: ContextInterceptor,
-  },
-  // {
-  //   provide: APP_INTERCEPTOR,
-  //   useClass: ExceptionInterceptor,
-  // },
-];
 @Module({
-  imports: [CqrsModule, DataAccessPostModule, RequestContextModule],
-  controllers: [...httpControllers, ...consummers],
+  imports: [
+    CqrsModule,
+    DataAccessPostModule,
+    ClientsModule.register([KafkaConfig]),
+  ],
+  controllers: [...httpControllers, ...consumers],
   providers: [
     Logger,
     ...repositories,
@@ -98,7 +99,7 @@ const interceptors = [
     ...queryHandlers,
     ...eventHandlers,
     ...mappers,
-    ...interceptors,
+    ...producers,
   ],
 })
 export class PostModule {}

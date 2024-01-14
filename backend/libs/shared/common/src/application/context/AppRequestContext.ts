@@ -26,10 +26,10 @@ export class RequestContextService {
   }
 
   static getRequestId(): string {
-    return this.getContext().requestId;
+    return this.getContext()?.requestId;
   }
 
   static getUserId(): string {
-    return this.getContext().userId;
+    return this.getContext()?.userId;
   }
 }

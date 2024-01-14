@@ -5,14 +5,16 @@ import { HttpStatus } from '@lib/shared/common/api';
 import { RequestContextService } from '@lib/shared/common/application';
 import { Err, Result } from 'oxide.ts';
 import { ReactPostCommand } from './react-post.command';
-import { POST_REPOSITORY } from '../post.di-token';
-import { PostRepository } from '@lib/post/domain';
+import { POST_PRODUCER, POST_REPOSITORY } from '../post.di-token';
+import { PostProducer, PostRepository } from '@lib/post/domain';
 
 @CommandHandler(ReactPostCommand)
 export class ReactPostCommandHandler {
   constructor(
     @Inject(POST_REPOSITORY)
-    private readonly repo: PostRepository
+    private readonly repo: PostRepository,
+    @Inject(POST_PRODUCER)
+    private readonly producer: PostProducer
   ) {}
 
   async execute(command: ReactPostCommand) {
@@ -33,7 +35,16 @@ export class ReactPostCommandHandler {
     }
 
     const result = await Result.safe(this.repo.savePost(post));
+    if (result.isErr()) {
+      return result;
+    }
 
+    !command.isUnReact &&
+      this.producer.publishPostReactedEvent(
+        post,
+        command.type,
+        RequestContextService.getUserId()
+      );
     return result;
   }
 }

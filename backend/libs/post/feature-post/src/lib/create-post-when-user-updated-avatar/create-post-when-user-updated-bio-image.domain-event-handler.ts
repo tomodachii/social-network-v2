@@ -34,7 +34,6 @@ export class CreatePostWhenUserUpdatedBioImageDomainEventHandler
       userId: event.aggregateId,
     });
 
-    console.log(post);
     await this.repo.createPost(post);
   }
 }
