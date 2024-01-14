@@ -5,14 +5,20 @@ import { HttpStatus } from '@lib/shared/common/api';
 import { RequestContextService } from '@lib/shared/common/application';
 import { Err, Ok, Result } from 'oxide.ts';
 import { CreateCommentCommand } from './create-comment.command';
-import { POST_REPOSITORY } from '../post.di-token';
-import { CreateAttachmentProps, PostRepository } from '@lib/post/domain';
+import { POST_PRODUCER, POST_REPOSITORY } from '../post.di-token';
+import {
+  CreateAttachmentProps,
+  PostProducer,
+  PostRepository,
+} from '@lib/post/domain';
 
 @CommandHandler(CreateCommentCommand)
 export class CreateCommentCommandHandler {
   constructor(
     @Inject(POST_REPOSITORY)
-    private readonly repo: PostRepository
+    private readonly repo: PostRepository,
+    @Inject(POST_PRODUCER)
+    private readonly producer: PostProducer
   ) {}
   async execute(command: CreateCommentCommand): Promise<Result<string, Error>> {
     const postOption = await this.repo.findPostById(command.postId);
@@ -53,6 +59,7 @@ export class CreateCommentCommandHandler {
       return result;
     }
 
+    this.producer.publishCommentCreatedEvent(post, commentId, command.replyTo);
     return Ok(commentId);
   }
 }

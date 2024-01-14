@@ -3,7 +3,7 @@ import { UpdateCoverUserReplicaCommand } from './update-cover-user-replica.comma
 import { Option, Some } from 'oxide.ts';
 import { UserReplicaRepository } from '../domain';
 import { Inject } from '@nestjs/common';
-import { USER_REPLICA_REPOSIROTY } from '../user-replica.di-token';
+import { USER_REPLICA_REPOSITORY } from '../user-replica.di-token';
 import { UserBioImageUpdateDomainEvent } from '../events';
 
 @CommandHandler(UpdateCoverUserReplicaCommand)
@@ -11,7 +11,7 @@ export class UpdateCoverUserReplicaCommandHandler
   implements ICommandHandler<UpdateCoverUserReplicaCommand>
 {
   constructor(
-    @Inject(USER_REPLICA_REPOSIROTY)
+    @Inject(USER_REPLICA_REPOSITORY)
     private readonly repo: UserReplicaRepository,
     private readonly eventBus: EventBus
   ) {}
