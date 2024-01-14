@@ -8,7 +8,7 @@ export abstract class QueryBase {}
 /**
  * Base class for paginated queries
  */
-export abstract class PaginatedQueryBase extends QueryBase {
+export class PaginatedQueryBase extends QueryBase {
   limit: number;
   offset: number;
   orderBy: OrderBy;

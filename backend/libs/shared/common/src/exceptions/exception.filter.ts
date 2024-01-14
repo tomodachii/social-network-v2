@@ -39,7 +39,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
       };
 
       Logger.debug(
-        `[${RequestContextService.getRequestId()}] ${message}`,
+        `[${RequestContextService?.getRequestId()}] ${message}`,
         this.serviceName
       );
 
@@ -48,7 +48,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     }
 
     Logger.debug(
-      `[${RequestContextService.getRequestId()}] ${exception.message}: ${
+      `[${RequestContextService?.getRequestId()}] ${exception.message}: ${
         exception.stack
       }`,
       this.serviceName

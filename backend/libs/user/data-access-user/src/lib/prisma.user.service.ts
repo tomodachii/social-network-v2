@@ -2,7 +2,7 @@ import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { BioImageRecord, PrismaClient, UserRecord } from '@prisma/client/user';
 
 export * from '@prisma/client/user';
-export type UserPrersistent = UserRecord & {
+export type UserPersistent = UserRecord & {
   avatar: BioImageRecord;
   cover: BioImageRecord;
 } & { version?: number };
