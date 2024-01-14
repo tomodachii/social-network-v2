@@ -7,12 +7,12 @@ import {
   Gender,
   UserEntity,
 } from '@lib/user/domain';
-import { UserPrersistent, UserRecord } from '@lib/user/data-access';
+import { UserPersistent, UserRecord } from '@lib/user/data-access';
 
 export class MysqlUserMapper implements Mapper<UserEntity, UserRecord> {
-  toPersistence(entity: UserEntity): UserPrersistent {
+  toPersistence(entity: UserEntity): UserPersistent {
     const copy = entity.getPropsCopy();
-    const record: UserPrersistent = {
+    const record: UserPersistent = {
       id: copy.id,
       createdAt: copy.createdAt,
       updatedAt: copy.updatedAt,
@@ -32,7 +32,7 @@ export class MysqlUserMapper implements Mapper<UserEntity, UserRecord> {
     };
     return record;
   }
-  toDomain(record: UserPrersistent): UserEntity {
+  toDomain(record: UserPersistent): UserEntity {
     const entity = new UserEntity({
       id: record.id,
       createdAt: new Date(record.createdAt),

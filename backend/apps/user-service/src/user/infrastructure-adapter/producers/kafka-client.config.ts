@@ -8,10 +8,7 @@ export const KafkaConfig: ClientProviderOptions = {
     client: {
       clientId: 'user-service',
       brokers: ['localhost:29092'],
-      connectionTimeout: 30000,
-    },
-    consumer: {
-      groupId: 'user-consumer',
+      connectionTimeout: 3000,
     },
     producer: {
       allowAutoTopicCreation: true,
