@@ -1,21 +1,21 @@
 {
-  "name": "shared-file",
+  "name": "feature-file",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/shared/file/src",
+  "sourceRoot": "libs/file/feature-file/src",
   "projectType": "library",
   "targets": {
     "lint": {
       "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["libs/shared/file/**/*.ts"]
+        "lintFilePatterns": ["libs/file/feature-file/**/*.ts"]
       }
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "libs/shared/file/jest.config.ts",
+        "jestConfig": "libs/file/feature-file/jest.config.ts",
         "passWithNoTests": true
       },
       "configurations": {
