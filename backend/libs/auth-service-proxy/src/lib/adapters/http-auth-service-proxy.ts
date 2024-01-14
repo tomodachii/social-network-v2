@@ -19,7 +19,7 @@ export class HttpAuthServiceProxy implements AuthServiceProxyPort {
     const result: AxiosResponse<BaseResponse<CreateCredentialResponse>> =
       await firstValueFrom(
         this.httpService.post(
-          'http://localhost:3001/create-credential',
+          'http://localhost:3001/create-credential/v1',
           credential
         )
       );
@@ -32,7 +32,7 @@ export class HttpAuthServiceProxy implements AuthServiceProxyPort {
 
   async rollbackSaveCredential(userId: string): Promise<BaseResponse<boolean>> {
     const result: AxiosResponse<BaseResponse<boolean>> = await firstValueFrom(
-      this.httpService.post('http://localhost:3001/rollback-credential', {
+      this.httpService.post('http://localhost:3001/rollback-credential/v1', {
         userId,
       })
     );
