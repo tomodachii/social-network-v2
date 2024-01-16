@@ -12,7 +12,7 @@ import { pipe } from 'fp-ts/lib/function'
 export const uploadRouter = Router();
 
 const getServiceFromRequestBody = (req: Request): Option<string> => {
-  const serviceOption = O.fromNullable<string>(req.body.path);
+  const serviceOption = O.fromNullable<string>(req.body.service);
   return O.match(
     () => none,
     (service: string) => {
@@ -26,7 +26,7 @@ const getServiceFromRequestBody = (req: Request): Option<string> => {
 };
 
 const getUserIDFromRequestBody = (req: Request): Option<string> => {
-  const userIDOption = O.fromNullable<string>(req.body.path);
+  const userIDOption = O.fromNullable<string>(req.body.userID);
   return O.match(
     () => none,
     (userID: string) => {
@@ -77,31 +77,38 @@ uploadRouter.post('/', (req: Request, res: Response) => {
 
   // validate request body step
   const requestValidationResult: Either<string, TaskEither<Error, void>> = pipe(
-    userIDOption,
+    serviceOption,
     O.match(
-      () => left('Error: Missing userID'),
-      (userID: string) =>
+      () => left("something"),
+      (service: string) => 
         pipe(
-          fileNameOption,
+          userIDOption,
           O.match(
-            () => left('Error: Missing file name'),
-            (fileName: string) =>
+            () => left('Error: Missing userID'),
+            (userID: string) =>
               pipe(
-                fileOption,
+                fileNameOption,
                 O.match(
-                  () => left('Error: File content is missing'),
-                  (file) => right(
-                    saveFile(
-                      path.join(__dirname, 'data', userID),
-                      fileName
-                    )(file)
-                  )
+                  () => left('Error: Missing file name'),
+                  (fileName: string) =>
+                    pipe(
+                      fileOption,
+                      O.match(
+                        () => left('Error: File content is missing'),
+                        (file) => right(
+                          saveFile(
+                            path.join(__dirname, 'data', userID, service),
+                            fileName
+                          )(file.buffer)
+                        )
+                      )
+                    )
                 )
               )
           )
         )
-    ),
-  );
+    )
+  )
 
   E.match(
     (error: string) => {
@@ -113,7 +120,7 @@ uploadRouter.post('/', (req: Request, res: Response) => {
           () => res.status(400).send("Error uploading file"),
           () => res.status(200).json({ uploadSessionId: uploadSessionId })
         )
-      );
+      )
     }
   )(requestValidationResult);
 });
