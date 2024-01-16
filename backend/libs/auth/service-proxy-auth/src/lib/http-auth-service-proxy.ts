@@ -1,8 +1,8 @@
 import {
   CreateCredentialPayload,
   CreateCredentialResponse,
-} from '../interfaces';
-import { AuthServiceProxyPort } from '../auth-service-proxy.port';
+  AuthServiceProxy,
+} from '@lib/shared/service-interface';
 import { Injectable } from '@nestjs/common';
 import { BaseResponse } from '@lib/shared/common/api';
 import { HttpService } from '@nestjs/axios';
@@ -10,7 +10,7 @@ import { firstValueFrom } from 'rxjs';
 import { AxiosResponse } from 'axios';
 
 @Injectable()
-export class HttpAuthServiceProxy implements AuthServiceProxyPort {
+export class HttpAuthServiceProxy implements AuthServiceProxy {
   constructor(private httpService: HttpService) {}
 
   async createCredentials(

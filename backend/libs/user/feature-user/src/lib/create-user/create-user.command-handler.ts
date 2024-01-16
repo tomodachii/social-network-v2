@@ -7,7 +7,7 @@ import {
 } from '../user.di-token';
 import { Inject } from '@nestjs/common';
 import { UserEntity, UserProducer, UserRepository } from '@lib/user/domain';
-import { AuthServiceProxyPort } from '@lib/auth-service-proxy';
+import { AuthServiceProxy } from '@lib/shared/service-interface';
 import { Ok, Result } from 'oxide.ts';
 import { Exception } from '@lib/shared/common/exceptions';
 import { CreateUserResponse } from './create-user-response.interface';
@@ -20,7 +20,7 @@ export class CreateUserCommandHandler
     @Inject(USER_REPOSITORY)
     private readonly userRepo: UserRepository,
     @Inject(AUTH_SERVICE_PROXY)
-    private readonly authServiceProxy: AuthServiceProxyPort,
+    private readonly authServiceProxy: AuthServiceProxy,
     @Inject(USER_PRODUCER)
     private readonly userProducer: UserProducer
   ) {}
@@ -49,7 +49,6 @@ export class CreateUserCommandHandler
         userId: user.id,
       });
     } catch (error: unknown) {
-      // Todos rollback
       await this.authServiceProxy.rollbackSaveCredential(user.id);
       throw error;
     }
