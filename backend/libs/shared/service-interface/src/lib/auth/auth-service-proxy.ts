@@ -1,10 +1,7 @@
 import { BaseResponse } from '@lib/shared/common/api';
-import {
-  CreateCredentialPayload,
-  CreateCredentialResponse,
-} from './interfaces';
+import { CreateCredentialPayload, CreateCredentialResponse } from './messages';
 
-export interface AuthServiceProxyPort {
+export interface AuthServiceProxy {
   createCredentials(
     credential: CreateCredentialPayload
   ): Promise<BaseResponse<CreateCredentialResponse>>;
