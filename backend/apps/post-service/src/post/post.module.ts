@@ -70,7 +70,7 @@ const eventHandlers: Provider[] = [
 
 const mappers: Provider[] = [MongoPostMapper];
 
-const repositories: Provider[] = [
+const infra: Provider[] = [
   {
     provide: POST_REPOSITORY,
     useClass: MongoPostRepository,
@@ -94,7 +94,7 @@ const repositories: Provider[] = [
   controllers: [...httpControllers, ...consumers],
   providers: [
     Logger,
-    ...repositories,
+    ...infra,
     ...commandHandlers,
     ...queryHandlers,
     ...eventHandlers,

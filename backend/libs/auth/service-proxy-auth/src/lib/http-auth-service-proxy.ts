@@ -1,6 +1,6 @@
 import {
-  CreateCredentialPayload,
-  CreateCredentialResponse,
+  CreateCredentialMessageRequest,
+  CreateCredentialMessageResponse,
   AuthServiceProxy,
 } from '@lib/shared/service-interface';
 import { Injectable } from '@nestjs/common';
@@ -14,9 +14,9 @@ export class HttpAuthServiceProxy implements AuthServiceProxy {
   constructor(private httpService: HttpService) {}
 
   async createCredentials(
-    credential: CreateCredentialPayload
-  ): Promise<BaseResponse<CreateCredentialResponse>> {
-    const result: AxiosResponse<BaseResponse<CreateCredentialResponse>> =
+    credential: CreateCredentialMessageRequest
+  ): Promise<BaseResponse<CreateCredentialMessageResponse>> {
+    const result: AxiosResponse<BaseResponse<CreateCredentialMessageResponse>> =
       await firstValueFrom(
         this.httpService.post(
           'http://localhost:3001/create-credential/v1',
@@ -26,7 +26,7 @@ export class HttpAuthServiceProxy implements AuthServiceProxy {
     const { data, meta } = result.data;
 
     return Promise.resolve(
-      new BaseResponse<CreateCredentialResponse>(data, meta)
+      new BaseResponse<CreateCredentialMessageResponse>(data, meta)
     );
   }
 

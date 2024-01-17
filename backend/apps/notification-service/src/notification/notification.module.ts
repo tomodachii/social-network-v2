@@ -4,12 +4,14 @@ import {
   LoadNotificationQueryHandler,
   LoadTotalUnreadNotificationQueryHandler,
   MarkAsReadNotificationCommandHandler,
+  NOTIFICATION_GATEWAY,
   NOTIFICATION_REPOSITORY,
   SaveNotificationCommandHandler,
 } from '@lib/notification/feature';
 import {
   HttpNotificationController,
   KafkaPostConsumer,
+  WebSocketNotificationGateway,
 } from './interface-adapter';
 import { DataAccessNotificationModule } from '@lib/notification/data-access';
 import { ScheduleModule } from '@nestjs/schedule';
@@ -35,8 +37,9 @@ const queryHandlers: Provider[] = [
 
 const mappers: Provider[] = [MongoNotificationMapper];
 
-const repositories: Provider[] = [
+const infra: Provider[] = [
   { provide: NOTIFICATION_REPOSITORY, useClass: MongoNotificationRepository },
+  { provide: NOTIFICATION_GATEWAY, useClass: WebSocketNotificationGateway },
 ];
 
 const jobs = [CleanNotificationAfterDateJob];
@@ -47,7 +50,7 @@ const jobs = [CleanNotificationAfterDateJob];
   providers: [
     Logger,
     ...jobs,
-    ...repositories,
+    ...infra,
     ...commandHandlers,
     ...queryHandlers,
     ...mappers,

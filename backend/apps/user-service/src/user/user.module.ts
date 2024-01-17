@@ -38,7 +38,7 @@ const queryHandlers: Provider[] = [FindUserByIdQueryHandler];
 
 const mappers: Provider[] = [MysqlUserMapper];
 
-const repositories: Provider[] = [
+const infra: Provider[] = [
   { provide: USER_REPOSITORY, useClass: MysqlUserRepository },
   { provide: AUTH_SERVICE_PROXY, useClass: HttpAuthServiceProxy },
   { provide: USER_PRODUCER, useClass: KafkaUserProducer },
@@ -54,7 +54,7 @@ const repositories: Provider[] = [
   controllers: [...httpControllers],
   providers: [
     Logger,
-    ...repositories,
+    ...infra,
     ...commandHandlers,
     ...queryHandlers,
     ...mappers,

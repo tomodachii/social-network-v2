@@ -1,9 +1,12 @@
 import { BaseResponse } from '@lib/shared/common/api';
-import { CreateCredentialPayload, CreateCredentialResponse } from './messages';
+import {
+  CreateCredentialMessageRequest,
+  CreateCredentialMessageResponse,
+} from './messages';
 
 export interface AuthServiceProxy {
   createCredentials(
-    credential: CreateCredentialPayload
-  ): Promise<BaseResponse<CreateCredentialResponse>>;
+    credential: CreateCredentialMessageRequest
+  ): Promise<BaseResponse<CreateCredentialMessageResponse>>;
   rollbackSaveCredential(userId: string): Promise<BaseResponse<boolean>>;
 }
