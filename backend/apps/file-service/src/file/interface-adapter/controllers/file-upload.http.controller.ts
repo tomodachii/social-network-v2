@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
-import { saveFile } from '../../infrastructure-adapter/file.repository';
+import { LocalRepository } from '../../infrastructure-adapter/file.repository';
 import path from 'path'
 import * as O from 'fp-ts/lib/Option'
 import { Option, none, some } from 'fp-ts/lib/Option';
@@ -8,11 +8,13 @@ import * as E from 'fp-ts/lib/Either'
 import { Either, left, right } from 'fp-ts/lib/Either'
 import { TaskEither } from 'fp-ts/lib/TaskEither';
 import { pipe } from 'fp-ts/lib/function'
+import { UploadFileCommandHandler } from '@lib/file/feature'
+import { ServicePrefix, SaveFileContent } from '@lib/file/domain';
 
 export const uploadRouter = Router();
 
 const getServiceFromRequestBody = (req: Request): Option<string> => {
-  const serviceOption = O.fromNullable<string>(req.body.path);
+  const serviceOption = O.fromNullable<string>(req.body.service);
   return O.match(
     () => none,
     (service: string) => {
@@ -26,7 +28,7 @@ const getServiceFromRequestBody = (req: Request): Option<string> => {
 };
 
 const getUserIDFromRequestBody = (req: Request): Option<string> => {
-  const userIDOption = O.fromNullable<string>(req.body.path);
+  const userIDOption = O.fromNullable<string>(req.body.userID);
   return O.match(
     () => none,
     (userID: string) => {
@@ -70,6 +72,8 @@ const getFileFromRequestBody = (req: Request): Option<Express.Multer.File> => {
 
 uploadRouter.post('/', (req: Request, res: Response) => {
   const uploadSessionId = uuidv4()
+  const repository = new LocalRepository(path.join(__dirname, 'data'))
+  const uploadFileCommandHandler = new UploadFileCommandHandler(repository)
   const serviceOption: Option<string> = getServiceFromRequestBody(req)
   const fileOption: Option<Express.Multer.File> = getFileFromRequestBody(req)
   const userIDOption: Option<string> = getUserIDFromRequestBody(req)
@@ -77,31 +81,45 @@ uploadRouter.post('/', (req: Request, res: Response) => {
 
   // validate request body step
   const requestValidationResult: Either<string, TaskEither<Error, void>> = pipe(
-    userIDOption,
+    serviceOption,
     O.match(
-      () => left('Error: Missing userID'),
-      (userID: string) =>
+      () => left("something"),
+      (service: string) => 
         pipe(
-          fileNameOption,
+          userIDOption,
           O.match(
-            () => left('Error: Missing file name'),
-            (fileName: string) =>
+            () => left('Error: Missing userID'),
+            (userID: string) =>
               pipe(
-                fileOption,
+                fileNameOption,
                 O.match(
-                  () => left('Error: File content is missing'),
-                  (file) => right(
-                    saveFile(
-                      path.join(__dirname, 'data', userID),
-                      fileName
-                    )(file)
-                  )
+                  () => left('Error: Missing file name'),
+                  (fileName: string) =>
+                    pipe(
+                      fileOption,
+                      O.match(
+                        () => left('Error: File content is missing'),
+                        (file) => {
+                          const saveFileEither = uploadFileCommandHandler.makeExecutor(
+                            service as ServicePrefix,
+                            userID,
+                            fileName,
+                            file.mimetype,
+                            file.size
+                          )
+                          return E.match(
+                            (error: string) => left(error),
+                            (uploadFileCommandHandlerExecute: SaveFileContent) => right(uploadFileCommandHandlerExecute(file.buffer))
+                          )(saveFileEither)
+                        }
+                      )
+                    )
                 )
               )
           )
         )
-    ),
-  );
+    )
+  )
 
   E.match(
     (error: string) => {
@@ -110,10 +128,11 @@ uploadRouter.post('/', (req: Request, res: Response) => {
     (taskEither: TaskEither<Error, void>) => {
       return taskEither().then(
         E.fold(
-          () => res.status(400).send("Error uploading file"),
+          (error) => res.status(400).send(error),
           () => res.status(200).json({ uploadSessionId: uploadSessionId })
         )
-      );
+      )
     }
   )(requestValidationResult);
+
 });

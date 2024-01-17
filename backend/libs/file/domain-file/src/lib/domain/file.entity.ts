@@ -72,7 +72,7 @@ const getFilePrefixStringPath: GetFilePrefixStringPath = (filePrefix) => {
   return `${filePrefix.service}/${filePrefix.owner}`
 }
 
-const getFileNameStringPath = (file: File): string => {
+export const getFileNameStringPath = (file: File): string => {
   return `${file.name}.${file.ext}`
 }
 
