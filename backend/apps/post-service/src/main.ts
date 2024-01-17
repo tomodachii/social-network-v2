@@ -30,7 +30,7 @@ async function bootstrap() {
       client: {
         clientId: 'post-service',
         brokers: ['localhost:29092'],
-        connectionTimeout: 300000,
+        connectionTimeout: 3000,
         retry: {
           initialRetryTime: 100,
           retries: 8,
@@ -38,10 +38,6 @@ async function bootstrap() {
       },
       consumer: {
         groupId: 'post-consumer',
-        allowAutoTopicCreation: true,
-      },
-      producer: {
-        allowAutoTopicCreation: true,
       },
     },
   });

@@ -15,6 +15,10 @@ export abstract class AggregateRoot<
 > extends Entity<EntityProps, AggregateID> {
   private _domainEvents: DomainEvent[] = [];
 
+  get version(): number {
+    return this.props.version;
+  }
+
   get domainEvents(): DomainEvent[] {
     return this._domainEvents;
   }

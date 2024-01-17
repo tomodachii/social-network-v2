@@ -10,7 +10,7 @@ import {
 } from '@lib/post/domain';
 import {
   CommentPersistent,
-  PostPrersistent,
+  PostPersistent,
   ReactRecord,
   AttachmentRecord,
   PostRecord,
@@ -18,7 +18,7 @@ import {
 } from '@lib/post/data-access';
 
 export class MysqlPostMapper implements Mapper<PostEntity, PostRecord> {
-  toDomain(record: PostPrersistent): PostEntity {
+  toDomain(record: PostPersistent): PostEntity {
     const result = new PostEntity({
       id: record.id,
       createdAt: record.createdAt,

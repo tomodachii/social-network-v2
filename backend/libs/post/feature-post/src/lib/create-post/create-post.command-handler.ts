@@ -5,8 +5,8 @@ import { Err, Ok, Result } from 'oxide.ts';
 import { Exception } from '@lib/shared/common/exceptions';
 import { HttpStatus } from '@lib/shared/common/api';
 import { CreatePostCommand } from './create-post.command';
-import { PostEntity, PostRepository } from '@lib/post/domain';
-import { POST_REPOSITORY } from '../post.di-token';
+import { PostEntity, PostProducer, PostRepository } from '@lib/post/domain';
+import { POST_PRODUCER, POST_REPOSITORY } from '../post.di-token';
 import { Guard } from '@lib/shared/common/utils';
 
 @CommandHandler(CreatePostCommand)
@@ -15,7 +15,9 @@ export class CreatePostCommandHandler
 {
   constructor(
     @Inject(POST_REPOSITORY)
-    protected readonly repo: PostRepository
+    protected readonly repo: PostRepository,
+    @Inject(POST_PRODUCER)
+    protected readonly producer: PostProducer
   ) {}
 
   async execute(command: CreatePostCommand): Promise<Result<string, Error>> {
@@ -58,6 +60,8 @@ export class CreatePostCommandHandler
     if (result.isErr()) {
       return result;
     }
+
+    this.producer.publishPostCreatedEvent(post);
 
     return Ok(post.id);
   }

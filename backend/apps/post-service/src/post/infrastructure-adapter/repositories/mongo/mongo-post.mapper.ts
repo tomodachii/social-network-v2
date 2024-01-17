@@ -10,7 +10,7 @@ import {
 } from '@lib/post/domain';
 import {
   // CommentPersistent,
-  // PostPrersistent,
+  // PostPersistent,
   React,
   Attachment,
   PostDocument,

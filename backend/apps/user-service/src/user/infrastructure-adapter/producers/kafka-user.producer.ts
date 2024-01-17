@@ -6,14 +6,13 @@ import {
 } from '@lib/shared/service-interface';
 import { Inject, Logger } from '@nestjs/common';
 import { ClientKafka } from '@nestjs/microservices';
-import { UserEntity, UserProducer, UserRepository } from '@lib/user/domain';
-import { USER_KAFKA_CLIENT, USER_REPOSITORY } from '@lib/user/feature';
+import { UserEntity, UserProducer } from '@lib/user/domain';
+import { USER_KAFKA_CLIENT } from '@lib/user/feature';
 
 export class KafkaUserProducer implements UserProducer {
   constructor(
     @Inject(USER_KAFKA_CLIENT) private readonly kafkaClient: ClientKafka,
-    private logger: Logger,
-    @Inject(USER_REPOSITORY) private readonly repo: UserRepository
+    private logger: Logger
   ) {}
 
   publishUserCreatedEvent(user: UserEntity): void {

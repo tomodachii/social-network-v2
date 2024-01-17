@@ -14,7 +14,6 @@
         "outputPath": "dist/apps/notification-service",
         "main": "apps/notification-service/src/main.ts",
         "tsConfig": "apps/notification-service/tsconfig.app.json",
-        "assets": ["apps/notification-service/src/assets"],
         "isolatedConfig": true,
         "webpackConfig": "apps/notification-service/webpack.config.js"
       },

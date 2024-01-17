@@ -3,14 +3,14 @@ import { SaveUserReplicaCommand } from './save-user-replica.command';
 import { Option, Some } from 'oxide.ts';
 import { UserReplicaRepository } from '../domain';
 import { Inject } from '@nestjs/common';
-import { USER_REPLICA_REPOSIROTY } from '../user-replica.di-token';
+import { USER_REPLICA_REPOSITORY } from '../user-replica.di-token';
 
 @CommandHandler(SaveUserReplicaCommand)
 export class SaveUserReplicaCommandHandler
   implements ICommandHandler<SaveUserReplicaCommand>
 {
   constructor(
-    @Inject(USER_REPLICA_REPOSIROTY)
+    @Inject(USER_REPLICA_REPOSITORY)
     private readonly repo: UserReplicaRepository
   ) {}
 

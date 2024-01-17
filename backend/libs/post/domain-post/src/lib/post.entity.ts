@@ -11,6 +11,7 @@ import {
   CreateCommentProps,
 } from './entities';
 import { PostMode } from './post.type';
+import { Nullable } from '@lib/shared/common/types';
 
 export interface PostProps {
   version: number;
@@ -73,6 +74,10 @@ export class PostEntity extends AggregateRoot<PostProps> {
   }
   set mode(mode: PostMode) {
     this.props.mode = mode;
+  }
+
+  get originalPost(): Nullable<PostEntity> {
+    return this.props.originalPost;
   }
 
   addComment(createCommentProp: CreateCommentProps): string {

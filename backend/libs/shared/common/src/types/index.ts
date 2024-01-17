@@ -10,3 +10,4 @@ export * from './require-one.type';
 export * from './mutable.type';
 export * from './nullable.type';
 export * from './opaque.type';
+export * from './constructor-type';
