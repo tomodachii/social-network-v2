@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
-import { saveFile } from '../../infrastructure-adapter/file.repository';
+import { LocalRepository } from '../../infrastructure-adapter/file.repository';
 import path from 'path'
 import * as O from 'fp-ts/lib/Option'
 import { Option, none, some } from 'fp-ts/lib/Option';
@@ -8,6 +8,8 @@ import * as E from 'fp-ts/lib/Either'
 import { Either, left, right } from 'fp-ts/lib/Either'
 import { TaskEither } from 'fp-ts/lib/TaskEither';
 import { pipe } from 'fp-ts/lib/function'
+import { UploadFileCommandHandler } from '@lib/file/feature'
+import { ServicePrefix, SaveFileContent } from '@lib/file/domain';
 
 export const uploadRouter = Router();
 
@@ -70,6 +72,8 @@ const getFileFromRequestBody = (req: Request): Option<Express.Multer.File> => {
 
 uploadRouter.post('/', (req: Request, res: Response) => {
   const uploadSessionId = uuidv4()
+  const repository = new LocalRepository(path.join(__dirname, 'data'))
+  const uploadFileCommandHandler = new UploadFileCommandHandler(repository)
   const serviceOption: Option<string> = getServiceFromRequestBody(req)
   const fileOption: Option<Express.Multer.File> = getFileFromRequestBody(req)
   const userIDOption: Option<string> = getUserIDFromRequestBody(req)
@@ -95,12 +99,19 @@ uploadRouter.post('/', (req: Request, res: Response) => {
                       fileOption,
                       O.match(
                         () => left('Error: File content is missing'),
-                        (file) => right(
-                          saveFile(
-                            path.join(__dirname, 'data', userID, service),
-                            fileName
-                          )(file.buffer)
-                        )
+                        (file) => {
+                          const saveFileEither = uploadFileCommandHandler.makeExecutor(
+                            service as ServicePrefix,
+                            userID,
+                            fileName,
+                            file.mimetype,
+                            file.size
+                          )
+                          return E.match(
+                            (error: string) => left(error),
+                            (uploadFileCommandHandlerExecute: SaveFileContent) => right(uploadFileCommandHandlerExecute(file.buffer))
+                          )(saveFileEither)
+                        }
                       )
                     )
                 )
@@ -117,10 +128,11 @@ uploadRouter.post('/', (req: Request, res: Response) => {
     (taskEither: TaskEither<Error, void>) => {
       return taskEither().then(
         E.fold(
-          () => res.status(400).send("Error uploading file"),
+          (error) => res.status(400).send(error),
           () => res.status(200).json({ uploadSessionId: uploadSessionId })
         )
       )
     }
   )(requestValidationResult);
+
 });
