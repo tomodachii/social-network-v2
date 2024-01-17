@@ -2,11 +2,15 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { SaveNotificationCommand } from './save-notification.command';
 import {
   NotificationEntity,
+  NotificationGateway,
   NotificationRepository,
 } from '@lib/notification/domain';
 import { None, Option, Result, Some } from 'oxide.ts';
 import { Inject } from '@nestjs/common';
-import { NOTIFICATION_REPOSITORY } from '../notification.di-token';
+import {
+  NOTIFICATION_GATEWAY,
+  NOTIFICATION_REPOSITORY,
+} from '../notification.di-token';
 
 @CommandHandler(SaveNotificationCommand)
 export class SaveNotificationCommandHandler
@@ -14,7 +18,9 @@ export class SaveNotificationCommandHandler
 {
   constructor(
     @Inject(NOTIFICATION_REPOSITORY)
-    private readonly repo: NotificationRepository
+    private readonly repo: NotificationRepository,
+    @Inject(NOTIFICATION_GATEWAY)
+    private readonly gateway: NotificationGateway
   ) {}
 
   async execute(command: SaveNotificationCommand): Promise<Option<boolean>> {
@@ -32,6 +38,10 @@ export class SaveNotificationCommandHandler
       const result = await Result.safe(
         this.repo.save(notificationResult.unwrap())
       );
+
+      if (result.isOk()) {
+        this.gateway.emitNotificationEvent(notificationResult.unwrap());
+      }
 
       return result.isOk() ? Some(true) : None;
     }

@@ -1,6 +1,6 @@
 import {
-  CreateCredentialPayload,
-  CreateCredentialResponse,
+  CreateCredentialMessageRequest,
+  CreateCredentialMessageResponse,
   AuthServiceProxy,
 } from '@lib/shared/service-interface';
 import { Injectable } from '@nestjs/common';
@@ -9,10 +9,10 @@ import { BaseResponse } from '@lib/shared/common/api';
 @Injectable()
 export class MockAuthServiceProxy implements AuthServiceProxy {
   createCredentials(
-    credential: CreateCredentialPayload
-  ): Promise<BaseResponse<CreateCredentialResponse>> {
+    credential: CreateCredentialMessageRequest
+  ): Promise<BaseResponse<CreateCredentialMessageResponse>> {
     return Promise.resolve(
-      new BaseResponse<CreateCredentialResponse>({
+      new BaseResponse<CreateCredentialMessageResponse>({
         token: 'token',
         refreshToken: 'refreshToken' + credential.email,
         expired: 1,

@@ -1,2 +1,2 @@
-export * from './create-credential-payload';
-export * from './create-credential-response';
+export * from './create-credential.message-request';
+export * from './create-credential.message-response';
