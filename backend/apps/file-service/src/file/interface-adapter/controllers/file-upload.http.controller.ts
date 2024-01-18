@@ -2,123 +2,146 @@ import { Router, Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import { LocalRepository } from '../../infrastructure-adapter/file.repository';
 import path from 'path'
-import * as O from 'fp-ts/lib/Option'
-import { Option, none, some } from 'fp-ts/lib/Option';
 import * as E from 'fp-ts/lib/Either'
-import { Either, left, right } from 'fp-ts/lib/Either'
+import { Either, left, right, getApplicativeValidation } from 'fp-ts/lib/Either'
 import { TaskEither } from 'fp-ts/lib/TaskEither';
 import { pipe } from 'fp-ts/lib/function'
 import { UploadFileCommandHandler } from '@lib/file/feature'
 import { ServicePrefix, SaveFileContent } from '@lib/file/domain';
+import { getSemigroup, NonEmptyArray } from 'fp-ts/lib/NonEmptyArray'
+import { sequenceT } from 'fp-ts/lib/Apply'
 
 export const uploadRouter = Router();
 
-const getServiceFromRequestBody = (req: Request): Option<string> => {
-  const serviceOption = O.fromNullable<string>(req.body.service);
-  return O.match(
-    () => none,
-    (service: string) => {
-      if (typeof service === 'string' && service !== '') {
-        return some(service);
-      } else {
-        return none;
-      }
-    }
-  )(serviceOption);
+const isNotBlankStringField = (field: string) => (s: string): Either<string, string> =>
+  typeof s === 'string' && s !== '' ? right(s) : left(`Error: Missing ${field}`)
+
+const isNotNoneFileField = (field: string) => (file: Express.Multer.File): Either<string, Express.Multer.File> =>
+  file.buffer ? right(file) : left(`Error: Missing ${field} content`)
+
+const getServiceFromRequestBody = (req: Request): Either<string, string> => {
+  const serviceFromNullable = E.fromNullable<string>('Error: Missing userID');
+  const serviceEither = serviceFromNullable<string>(req.body.service);
+  return pipe(
+    serviceEither,
+    E.chain(isNotBlankStringField('service'))
+  )
 };
 
-const getUserIDFromRequestBody = (req: Request): Option<string> => {
-  const userIDOption = O.fromNullable<string>(req.body.userID);
-  return O.match(
-    () => none,
-    (userID: string) => {
-      if (typeof userID === 'string' && userID !== '') {
-        return some(userID);
-      } else {
-        return none;
-      }
-    }
-  )(userIDOption);
+const getUserIDFromRequestBody = (req: Request): Either<string, string> => {
+  const userIDFromNullable = E.fromNullable<string>('Error: Missing userID');
+  const userIDEither = userIDFromNullable<string>(req.body.userID);
+  return pipe(
+    userIDEither,
+    E.chain(isNotBlankStringField('userID'))
+  )
 };
 
 
-const getNameFromRequestBody = (req: Request): Option<string> => {
-  const fileNameOption = O.fromNullable<string>(req.body.name)
-  return O.match(
-    () => none,
-    (fileName: string) => {
-      if (typeof fileName === 'string' && fileName !== '') {
-        return some(fileName);
-      } else {
-        return none;
-      }
-    }
-  )(fileNameOption);
+const getNameFromRequestBody = (req: Request): Either<string, string> => {
+  const nameFromNullable = E.fromNullable<string>('Error: Missing name');
+  const fileNameEither = nameFromNullable<string>(req.body.name);
+  return pipe(
+    fileNameEither,
+    E.chain(isNotBlankStringField('name'))
+  )
 };
 
-const getFileFromRequestBody = (req: Request): Option<Express.Multer.File> => {
-  const fileOption = O.fromNullable<Express.Multer.File>(req.file)
-  return O.match(
-    () => none,
-    (file: Express.Multer.File) => {
-      if (file.buffer) {
-        return some(file);
-      } else {
-        return none;
-      }
-    }
-  )(fileOption);
+const getFileFromRequestBody = (req: Request): Either<string, Express.Multer.File> => {
+  const fileFromNullable = E.fromNullable<string>('Error: Missing File');
+  const fileEither = fileFromNullable<Express.Multer.File>(req.file)
+  return pipe(
+    fileEither,
+    E.chain(isNotNoneFileField('file'))
+  )
+}
+
+function liftE<L, A, B>(
+  check: (a: A) => Either<L, B>
+): (a: A) => Either<NonEmptyArray<L>, B> {
+  return a =>
+    pipe(
+      check(a),
+      E.mapLeft(a => [a])
+    )
 }
 
 uploadRouter.post('/', (req: Request, res: Response) => {
   const uploadSessionId = uuidv4()
   const repository = new LocalRepository(path.join(__dirname, 'data'))
   const uploadFileCommandHandler = new UploadFileCommandHandler(repository)
-  const serviceOption: Option<string> = getServiceFromRequestBody(req)
-  const fileOption: Option<Express.Multer.File> = getFileFromRequestBody(req)
-  const userIDOption: Option<string> = getUserIDFromRequestBody(req)
-  const fileNameOption: Option<string> = getNameFromRequestBody(req)
+  // const serviceEither: Either<string, string> = getServiceFromRequestBody(req)
+  // const fileEither: Either<string, Express.Multer.File> = getFileFromRequestBody(req)
+  // const userIDEither: Either<string, string> = getUserIDFromRequestBody(req)
+  // const fileNameEither: Either<string, string> = getNameFromRequestBody(req)
+
+  const serviceEither: Either<NonEmptyArray<string>, string> = liftE(getServiceFromRequestBody)(req)
+  const fileEither: Either<NonEmptyArray<string>, Express.Multer.File> = liftE(getFileFromRequestBody)(req)
+  const userIDEither: Either<NonEmptyArray<string>, string> = liftE(getUserIDFromRequestBody)(req)
+  const fileNameEither: Either<NonEmptyArray<string>, string> = liftE(getNameFromRequestBody)(req)
 
   // validate request body step
-  const requestValidationResult: Either<string, TaskEither<Error, void>> = pipe(
-    serviceOption,
-    O.match(
-      () => left("something"),
-      (service: string) => 
-        pipe(
-          userIDOption,
-          O.match(
-            () => left('Error: Missing userID'),
-            (userID: string) =>
-              pipe(
-                fileNameOption,
-                O.match(
-                  () => left('Error: Missing file name'),
-                  (fileName: string) =>
-                    pipe(
-                      fileOption,
-                      O.match(
-                        () => left('Error: File content is missing'),
-                        (file) => {
-                          const saveFileEither = uploadFileCommandHandler.makeExecutor(
-                            service as ServicePrefix,
-                            userID,
-                            fileName,
-                            file.mimetype,
-                            file.size
-                          )
-                          return E.match(
-                            (error: string) => left(error),
-                            (uploadFileCommandHandlerExecute: SaveFileContent) => right(uploadFileCommandHandlerExecute(file.buffer))
-                          )(saveFileEither)
-                        }
-                      )
-                    )
-                )
-              )
-          )
-        )
-    )
+  // const requestValidationResult: Either<string, TaskEither<Error, void>> = pipe(
+  //   serviceOption,
+  //   O.match(
+  //     () => left('Error: Missing service'),
+  //     (service: string) => 
+  //       pipe(
+  //         userIDOption,
+  //         O.match(
+  //           () => left('Error: Missing userID'),
+  //           (userID: string) =>
+  //             pipe(
+  //               fileNameOption,
+  //               O.match(
+  //                 () => left('Error: Missing file name'),
+  //                 (fileName: string) =>
+  //                   pipe(
+  //                     fileOption,
+  //                     O.match(
+  //                       () => left('Error: File content is missing'),
+  //                       (file) => {
+  //                         const saveFileEither = uploadFileCommandHandler.makeExecutor(
+  //                           service as ServicePrefix,
+  //                           userID,
+  //                           fileName,
+  //                           file.mimetype,
+  //                           file.size
+  //                         )
+  //                         return E.match(
+  //                           (error: string) => left(error),
+  //                           (uploadFileCommandHandlerExecute: SaveFileContent) => right(uploadFileCommandHandlerExecute(file.buffer))
+  //                         )(saveFileEither)
+  //                       }
+  //                     )
+  //                   )
+  //               )
+  //             )
+  //         )
+  //       )
+  //   )
+  // )
+
+  const requestValidationResult = pipe(
+    sequenceT(getApplicativeValidation(getSemigroup<string>()))(
+      serviceEither,
+      userIDEither,
+      fileNameEither,
+      fileEither
+    ),
+    E.map(([service, userID, fileName, file]) => {
+      const saveFileEither: E.Either<string, (fileBuffer: Buffer) => TaskEither<Error, void>> = uploadFileCommandHandler.makeExecutor(
+        service as ServicePrefix,
+        userID,
+        fileName,
+        file.mimetype,
+        file.size
+      )
+      return E.match(
+        (error: string) => left([error]),
+        (uploadFileCommandHandlerExecute: SaveFileContent) => right(uploadFileCommandHandlerExecute(file.buffer))
+      )(saveFileEither)
+    }),
   )
 
   E.match(
