@@ -70,66 +70,52 @@ uploadRouter.post('/', (req: Request, res: Response) => {
   const uploadSessionId = uuidv4()
   const repository = new LocalRepository(path.join(__dirname, 'data'))
   const uploadFileCommandHandler = new UploadFileCommandHandler(repository)
-  // const serviceEither: Either<string, string> = getServiceFromRequestBody(req)
-  // const fileEither: Either<string, Express.Multer.File> = getFileFromRequestBody(req)
-  // const userIDEither: Either<string, string> = getUserIDFromRequestBody(req)
-  // const fileNameEither: Either<string, string> = getNameFromRequestBody(req)
+  const serviceEither: Either<string, string> = getServiceFromRequestBody(req)
+  const fileEither: Either<string, Express.Multer.File> = getFileFromRequestBody(req)
+  const userIDEither: Either<string, string> = getUserIDFromRequestBody(req)
+  const fileNameEither: Either<string, string> = getNameFromRequestBody(req)
 
-  const serviceEither: Either<NonEmptyArray<string>, string> = liftE(getServiceFromRequestBody)(req)
-  const fileEither: Either<NonEmptyArray<string>, Express.Multer.File> = liftE(getFileFromRequestBody)(req)
-  const userIDEither: Either<NonEmptyArray<string>, string> = liftE(getUserIDFromRequestBody)(req)
-  const fileNameEither: Either<NonEmptyArray<string>, string> = liftE(getNameFromRequestBody)(req)
+  // These commented lines are kept for refactoring purpose
 
-  // validate request body step
-  // const requestValidationResult: Either<string, TaskEither<Error, void>> = pipe(
-  //   serviceOption,
-  //   O.match(
-  //     () => left('Error: Missing service'),
-  //     (service: string) => 
-  //       pipe(
-  //         userIDOption,
-  //         O.match(
-  //           () => left('Error: Missing userID'),
-  //           (userID: string) =>
-  //             pipe(
-  //               fileNameOption,
-  //               O.match(
-  //                 () => left('Error: Missing file name'),
-  //                 (fileName: string) =>
-  //                   pipe(
-  //                     fileOption,
-  //                     O.match(
-  //                       () => left('Error: File content is missing'),
-  //                       (file) => {
-  //                         const saveFileEither = uploadFileCommandHandler.makeExecutor(
-  //                           service as ServicePrefix,
-  //                           userID,
-  //                           fileName,
-  //                           file.mimetype,
-  //                           file.size
-  //                         )
-  //                         return E.match(
-  //                           (error: string) => left(error),
-  //                           (uploadFileCommandHandlerExecute: SaveFileContent) => right(uploadFileCommandHandlerExecute(file.buffer))
-  //                         )(saveFileEither)
-  //                       }
-  //                     )
-  //                   )
-  //               )
-  //             )
-  //         )
-  //       )
-  //   )
+  // const serviceEither: Either<NonEmptyArray<string>, string> = liftE(getServiceFromRequestBody)(req)
+  // const fileEither: Either<NonEmptyArray<string>, Express.Multer.File> = liftE(getFileFromRequestBody)(req)
+  // const userIDEither: Either<NonEmptyArray<string>, string> = liftE(getUserIDFromRequestBody)(req)
+  // const fileNameEither: Either<NonEmptyArray<string>, string> = liftE(getNameFromRequestBody)(req)
+
+  // const requestValidationResult = pipe(
+  //   sequenceT(getApplicativeValidation(getSemigroup<string>()))(
+  //     serviceEither,
+  //     userIDEither,
+  //     fileNameEither,
+  //     fileEither
+  //   ),
+  //   E.map(([service, userID, fileName, file]) => {
+  //     const saveFileEither: E.Either<string, (fileBuffer: Buffer) => TaskEither<Error, void>> = uploadFileCommandHandler.makeExecutor(
+  //       service as ServicePrefix,
+  //       userID,
+  //       fileName,
+  //       file.mimetype,
+  //       file.size
+  //     )
+  //     return E.match(
+  //       (error: string) => left([error]),
+  //       (uploadFileCommandHandlerExecute: SaveFileContent) => right(uploadFileCommandHandlerExecute(file.buffer))
+  //     )(saveFileEither)
+  //   }),
   // )
 
   const requestValidationResult = pipe(
-    sequenceT(getApplicativeValidation(getSemigroup<string>()))(
-      serviceEither,
-      userIDEither,
-      fileNameEither,
-      fileEither
-    ),
-    E.map(([service, userID, fileName, file]) => {
+    E.Do,
+    E.bind('service', () => serviceEither),
+    E.bind('file', () => fileEither),
+    E.bind('userID', () => userIDEither),
+    E.bind('fileName', () => fileNameEither),
+    E.map(({service, userID, fileName, file}) => ({service, userID, fileName, file})),
+  )
+
+  const domainValidationResult = E.match(
+    (error: string) => left(error),
+    ({service, userID, fileName, file}) => {
       const saveFileEither: E.Either<string, (fileBuffer: Buffer) => TaskEither<Error, void>> = uploadFileCommandHandler.makeExecutor(
         service as ServicePrefix,
         userID,
@@ -138,11 +124,11 @@ uploadRouter.post('/', (req: Request, res: Response) => {
         file.size
       )
       return E.match(
-        (error: string) => left([error]),
+        (error: string) => left(error),
         (uploadFileCommandHandlerExecute: SaveFileContent) => right(uploadFileCommandHandlerExecute(file.buffer))
       )(saveFileEither)
-    }),
-  )
+    }
+  )(requestValidationResult)
 
   E.match(
     (error: string) => {
@@ -156,6 +142,6 @@ uploadRouter.post('/', (req: Request, res: Response) => {
         )
       )
     }
-  )(requestValidationResult);
+  )(domainValidationResult);
 
 });
