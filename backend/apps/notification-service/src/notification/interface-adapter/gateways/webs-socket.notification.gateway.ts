@@ -23,6 +23,6 @@ export class WebSocketNotificationGateway implements NotificationGateway {
       data: data.data,
     };
 
-    this.server.emit('notification_created', event);
+    this.server.emit('notification_created', event, { userId: '123' });
   }
 }

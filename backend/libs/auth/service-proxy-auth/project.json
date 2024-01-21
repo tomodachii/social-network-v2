@@ -1,5 +1,5 @@
 {
-  "name": "auth-service-proxy",
+  "name": "service-proxy-auth",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/auth/service-proxy-auth/src",
   "projectType": "library",
