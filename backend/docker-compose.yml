@@ -112,14 +112,23 @@ services:
   file-cache:
     image: redis:7-alpine
     restart: unless-stopped
-    command: [ "redis-server", "--appendonly", "yes" ]
+    command: ['redis-server', '--appendonly', 'yes']
     volumes:
       - ./data/file-cache:/data
     ports:
       - ${FILE_SVC_REDIS_CACHING_PORT:-6379}:6379
     networks:
       - socialnetwork_backend
-
+  post-cache:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: ['redis-server', '--appendonly', 'yes']
+    volumes:
+      - ./data/post-cache:/data
+    ports:
+      - ${POST_SVC_REDIS_CACHING_PORT:-6380}:6379
+    networks:
+      - socialnetwork_backend
 networks:
   socialnetwork_backend:
     ipam:
