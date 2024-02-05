@@ -41,7 +41,8 @@
       "@lib/user/data-access": ["libs/user/data-access-user/src/index.ts"],
       "@lib/user/domain": ["libs/user/domain-user/src/index.ts"],
       "@lib/user/feature": ["libs/user/feature-user/src/index.ts"],
-      "@lib/user/service-proxy": ["libs/user/service-proxy-user/src/index.ts"]
+      "@lib/user/service-proxy": ["libs/user/service-proxy-user/src/index.ts"],
+      "@lib/feed/news-feed-cache": ["libs/feeds/news-feed-cache/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
