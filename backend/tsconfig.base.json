@@ -16,6 +16,7 @@
     "baseUrl": ".",
     "paths": {
       "@lib/auth-service-proxy": ["libs/auth/service-proxy-auth/src/index.ts"],
+      "@lib/feed/news-feed-cache": ["libs/feeds/news-feed-cache/src/index.ts"],
       "@lib/file/data-access": ["libs/file/data-access-file/src/index.ts"],
       "@lib/file/domain": ["libs/file/domain-file/src/index.ts"],
       "@lib/file/feature": ["libs/file/feature-file/src/index.ts"],
@@ -42,7 +43,15 @@
       "@lib/user/domain": ["libs/user/domain-user/src/index.ts"],
       "@lib/user/feature": ["libs/user/feature-user/src/index.ts"],
       "@lib/user/service-proxy": ["libs/user/service-proxy-user/src/index.ts"],
-      "@lib/feed/news-feed-cache": ["libs/feeds/news-feed-cache/src/index.ts"]
+      "@lib/relationship/data-access": [
+        "libs/relationship/data-access-relationship/src/index.ts"
+      ],
+      "@lib/relationship/domain": [
+        "libs/relationship/domain-relationship/src/index.ts"
+      ],
+      "@lib/relationship/feature": [
+        "libs/relationship/feature-relationship/src/index.ts"
+      ]
     }
   },
   "exclude": ["node_modules", "tmp"]
