@@ -1,8 +1,12 @@
-export * from './aggregate-root.base';
+import 'reflect-metadata';
+export * from './utils';
+export * from './events';
+// export * from './metadata';
+export * from './entities';
+export * from './decorators';
+export * from './exceptions';
+export * from './value-objects';
+export * from './interfaces/domain';
+export * from './interfaces/ports';
 export * from './command.base';
-export * from './domain-event.base';
-export * from './entity.base';
-export * from './mapper.interface';
-export * from './repository';
-export * from './value-object.base';
 export * from './query.base';

@@ -6,6 +6,7 @@ import {
   CONFLICT,
   INTERNAL_SERVER_ERROR,
   NOT_FOUND,
+  RUNTIME_ERROR,
 } from '.';
 import { Exception } from './exception.base';
 
@@ -48,6 +49,10 @@ export class ArgumentOutOfRangeException extends Exception {
  */
 export class ConflictException extends Exception {
   override readonly code = CONFLICT;
+}
+
+export class RuntimeException extends Exception {
+  override readonly code = RUNTIME_ERROR;
 }
 
 /**
