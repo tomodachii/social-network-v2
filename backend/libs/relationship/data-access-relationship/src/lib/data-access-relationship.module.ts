@@ -11,7 +11,6 @@ import { Neo4jModule } from 'nest-neo4j';
       password: '12345678',
     }),
   ],
-  providers: [],
   exports: [Neo4jModule],
 })
 export class DataAccessRelationshipModule {}

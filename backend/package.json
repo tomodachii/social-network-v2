@@ -5,6 +5,7 @@
   "scripts": {},
   "private": true,
   "dependencies": {
+    "@neo4j/cypher-builder": "^1.11.0",
     "@nestjs/axios": "^3.0.0",
     "@nestjs/cache-manager": "^2.2.0",
     "@nestjs/common": "10.0.2",

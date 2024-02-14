@@ -19,7 +19,7 @@ export class UnfollowCommandHandler
     protected readonly repo: RelationshipRepository
   ) {}
 
-  async execute(command: UnfollowCommand): Promise<void> {
+  async execute(command: UnfollowCommand): Promise<boolean> {
     const relationship = new RelationshipEntity({
       id: UUID.generate(),
       props: {
@@ -31,6 +31,6 @@ export class UnfollowCommandHandler
       updatedAt: new UpdatedAt({ value: new Date() }),
     });
 
-    await this.repo.save(relationship);
+    return await this.repo.remove(relationship, RelationshipType.FOLLOW);
   }
 }

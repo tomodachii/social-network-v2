@@ -16,7 +16,7 @@ export class FollowCommandHandler implements ICommandHandler<FollowCommand> {
     @Inject(RELATIONSHIP_REPOSITORY)
     protected readonly repo: RelationshipRepository
   ) {}
-  async execute(command: FollowCommand): Promise<void> {
+  async execute(command: FollowCommand): Promise<boolean> {
     const relationship = new RelationshipEntity({
       id: UUID.generate(),
       props: {
@@ -28,6 +28,6 @@ export class FollowCommandHandler implements ICommandHandler<FollowCommand> {
       updatedAt: new UpdatedAt({ value: new Date() }),
     });
 
-    await this.repo.save(relationship);
+    return await this.repo.save(relationship);
   }
 }

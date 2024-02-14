@@ -215,6 +215,10 @@ export abstract class Entity<
     return Object.freeze(copyProps);
   }
 
+  public getProps(): Props {
+    return Object.freeze(this._props);
+  }
+
   /**
    * Get created at.
    * @return CreatedAt;
