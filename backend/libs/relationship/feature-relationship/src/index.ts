@@ -4,3 +4,4 @@ export * from './lib/unfriend';
 export * from './lib/follow';
 export * from './lib/unfollow';
 export * from './lib/block';
+export * from './lib/unblock';

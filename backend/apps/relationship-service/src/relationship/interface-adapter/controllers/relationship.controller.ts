@@ -2,6 +2,7 @@ import {
   AddFriendCommand,
   BlockCommand,
   FollowCommand,
+  UnblockCommand,
   UnfollowCommand,
   UnfriendCommand,
 } from '@lib/relationship/feature';
@@ -11,11 +12,12 @@ import {
   AddFriendDto,
   BlockDto,
   FollowDto,
+  UnblockDto,
   UnfollowDto,
   UnfriendDto,
 } from './dtos';
 
-@Controller('relationship')
+@Controller('relationship/v1')
 export class RelationshipController {
   constructor(protected readonly commandBus: CommandBus) {}
 
@@ -42,5 +44,10 @@ export class RelationshipController {
   @Post('block')
   async block(@Body() blockDto: BlockDto) {
     return this.commandBus.execute(new BlockCommand(blockDto));
+  }
+
+  @Post('unblock')
+  async unblock(@Body() unBlockDto: UnblockDto) {
+    return this.commandBus.execute(new UnblockCommand(unBlockDto));
   }
 }

@@ -17,7 +17,7 @@ export class BlockCommandHandler implements ICommandHandler<BlockCommand> {
     protected readonly repo: RelationshipRepository
   ) {}
 
-  async execute(command: BlockCommand): Promise<void> {
+  async execute(command: BlockCommand): Promise<boolean> {
     const relationship = new RelationshipEntity({
       id: UUID.generate(),
       props: {
@@ -29,6 +29,6 @@ export class BlockCommandHandler implements ICommandHandler<BlockCommand> {
       updatedAt: new UpdatedAt({ value: new Date() }),
     });
 
-    await this.repo.save(relationship);
+    return await this.repo.save(relationship);
   }
 }
