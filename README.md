@@ -1,6 +1,6 @@
 # social-network
 
-Pet project built to learn microservices architecture
+Personal project built to learn microservices architecture
 
 ## Project structure of each microservice
 
